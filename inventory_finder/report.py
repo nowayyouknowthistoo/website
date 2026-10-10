@@ -26,15 +26,15 @@ def write_csv(scored, path):
         w.writerows(rows(scored))
 
 
-def write_html(scored, path, stats, focus=False):
+def write_html(scored, path, stats, focus=False, target=None):
     """Self-contained, filterable lead sheet (also publishable as an Artifact)."""
     data = list(rows(scored))
     counts = {k: sum(1 for r in data if r["tier"] == k) for k in ("strong", "possible")}
     bands = sorted({r["band"] for r in data if r["band"]})
     band_select = ('<select id="band" aria-label="Band"><option value="">All bands</option>'
                    + "".join(f'<option>{html.escape(b)}</option>' for b in bands) + "</select>") if bands else ""
-    heading = "Focus band leads" if focus else "Vintage inventory leads"
-    scope = (f"Tees, crewnecks and snapbacks for {', '.join(bands)}" if focus else
+    heading = target.name if target else "Focus band leads" if focus else "Vintage inventory leads"
+    scope = target.notes if target else (f"Tees, crewnecks and snapbacks for {', '.join(bands)}" if focus else
              "Tees, crewnecks and snapbacks from Poshmark and Vinted that fit the music / pop culture / sports / cartoons formula")
     trs = []
     for r in data:
@@ -50,7 +50,7 @@ def write_html(scored, path, stats, focus=False):
             f'<td>{r["item_type"]}</td><td>{html.escape(r["band"] or r["themes"])}</td>'
             f'<td><span class="site {r["site"]}">{r["site"]}</span></td></tr>'
         )
-    page = f"""<title>{"Focus Band Leads" if focus else "Vintage Inventory Leads"}</title>
+    page = f"""<title>{"Nirvana Tie-Dye Hunt" if target else "Focus Band Leads" if focus else "Vintage Inventory Leads"}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>

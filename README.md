@@ -20,6 +20,16 @@ python -m inventory_finder --focus --out output/focus_bands
 python -m inventory_finder --focus --from-tinyfish data/raw_bands/*.json --out output/focus_bands
 ```
 
+## Target hunts
+
+`inventory_finder/targets.py` holds strict hunts for one specific item. A listing must match every `require` pattern and no `exclude` pattern, and it needs at least one real vintage tell (an early-90s date, single stitch, made in USA, a period blank like Fruit of the Loom, Hanes or Screen Stars, or parking-lot/bootleg wording) to count as a lead.
+
+```bash
+python -m inventory_finder --target nirvana-tiedye-ls --out output/nirvana_tiedye
+```
+
+`nirvana-tiedye-ls` covers Nirvana tie-dye long sleeves (Nevermind era). It drops the modern versions that fill search results: Old Navy (purple/pink with yellow logo), Zara, Rowdy Sprout, H&M, Urban Outfitters, smiley reissues, Colortone blanks, and current official merch with sleeve prints.
+
 ## Output
 
 `output/leads.html` is a sortable, filterable lead sheet (tier, site, item type, max price, title search).

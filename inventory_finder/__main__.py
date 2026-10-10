@@ -10,6 +10,7 @@ from pathlib import Path
 
 from .formula import MIN_SCORE, evaluate
 from .queries import FOCUS_QUERIES, QUERIES
+from .targets import TARGETS, evaluate_target
 from .report import write_csv, write_html
 
 
@@ -19,6 +20,8 @@ def main():
                     help="parse saved TinyFish fetch results instead of scraping live")
     ap.add_argument("--focus", action="store_true",
                     help="run the focus-band searches and keep only focus-band listings")
+    ap.add_argument("--target", choices=list(TARGETS),
+                    help="hunt one specific item with its own strict filter (see targets.py)")
     ap.add_argument("--sites", nargs="+", default=list(QUERIES), choices=list(QUERIES))
     ap.add_argument("--min-score", type=int, default=MIN_SCORE)
     ap.add_argument("--max-price", type=float, help="drop listings above this price")
@@ -30,7 +33,8 @@ def main():
         listings = load(args.from_tinyfish)
     else:
         from .live import fetch_all
-        queries = FOCUS_QUERIES if args.focus else QUERIES
+        queries = (TARGETS[args.target].queries if args.target
+                   else FOCUS_QUERIES if args.focus else QUERIES)
         listings = fetch_all({s: queries[s] for s in args.sites})
     listings = [l for l in listings if l.site in args.sites]
 
@@ -40,7 +44,12 @@ def main():
             seen.add(l.url)
             unique.append(l)
 
-    scored = [(l, evaluate(l.title, l.brand, l.size, l.price)) for l in unique]
+    if args.target:
+        t = TARGETS[args.target]
+        scored = [(l, evaluate_target(t, l.title, l.brand, l.size)) for l in unique]
+        args.min_score = t.min_score
+    else:
+        scored = [(l, evaluate(l.title, l.brand, l.size, l.price)) for l in unique]
     matches = [(l, v) for l, v in scored
                if v.match and v.score >= args.min_score and (v.band or not args.focus)
                and (args.max_price is None or (l.price or 0) <= args.max_price)]
@@ -52,7 +61,8 @@ def main():
     write_csv(sorted(scored, key=lambda lv: -lv[1].score), out / "all_scored.csv")
     stats = (f"{len(unique)} listings scanned ({len(listings) - len(unique)} duplicates removed), "
              f"{len(matches)} match the formula")
-    write_html(matches, out / "leads.html", stats, focus=args.focus)
+    write_html(matches, out / "leads.html", stats, focus=args.focus,
+               target=TARGETS[args.target] if args.target else None)
     print(stats)
     print(f"wrote {out/'leads.csv'}, {out/'leads.html'}, {out/'all_scored.csv'}")
 
