@@ -9,6 +9,17 @@ Pulls listings from **Poshmark** and **Vinted** and keeps the ones that fit the 
 
 Each match gets a score: **9+ = strong lead**, **6–8 = possible**. All the keyword lists and weights live in `inventory_finder/formula.py`. Edit them to tune what gets through. Search terms are in `inventory_finder/queries.py`.
 
+## Focus bands
+
+`FOCUS_BANDS` in `formula.py` lists the acts being hunted right now: Nirvana, Kurt Cobain, Smashing Pumpkins, Soundgarden, Morrissey, Butthole Surfers, The Cranberries, Red Hot Chili Peppers. Album and member names count too (e.g. In Utero, Mellon Collie, Badmotorfinger, Blood Sugar Sex Magik). A focus-band hit adds +2.
+
+`--focus` runs the band searches in `FOCUS_QUERIES` and keeps only focus-band listings. These bands are heavily reprinted, so the formula is strict about it: "reprint" costs 8 points, a Poshmark listing offered in "Various sizes" (print-on-demand) costs 6, and "gift for fans", "retro" or "unisex t-shirt" wording costs 3.
+
+```bash
+python -m inventory_finder --focus --out output/focus_bands
+python -m inventory_finder --focus --from-tinyfish data/raw_bands/*.json --out output/focus_bands
+```
+
 ## Output
 
 `output/leads.html` is a sortable, filterable lead sheet (tier, site, item type, max price, title search).

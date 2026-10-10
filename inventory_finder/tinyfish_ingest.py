@@ -29,19 +29,37 @@ def _unique(links, needle):
 
 
 def parse_poshmark(result) -> list[Listing]:
-    """Cards are rendered as: title / price [/ original price] / size."""
+    """Poshmark serves two tile layouts:
+      new: title / price [newline original price] / size
+      old: title / price / "Size: X" newline brand / seller / [like count]
+    Both have the title right before the price block and the size right after."""
     urls = _unique(result.get("links", []), "/listing/")
     blocks = [b.strip() for b in result["text"].split("\n\n") if b.strip()]
-    cards = [(blocks[i], blocks[i + 1].split("\n"), blocks[i + 2])
-             for i in range(0, len(blocks) - 2, 3)]
-    if len(cards) != len(urls) or len(blocks) % 3:
-        raise ValueError(f"poshmark: {len(cards)} cards vs {len(urls)} links for {result['url']}")
+    price_at = [i for i, b in enumerate(blocks)
+                if i > 0 and all(PRICE.match(x) for x in b.split("\n"))]
+    # Link order usually matches card order, but not always (some tiles have
+    # no link in the rendered markup), so pair them by the title in the URL.
+    def key(t):
+        return re.sub(r"[^a-z0-9]", "", t.lower())[:30]
+    by_key = {}
+    for u in urls:
+        slug = urlparse(u).path.rsplit("/", 1)[-1].rsplit("-", 1)[0]
+        by_key.setdefault(key(slug), u)
     q = _query(result["url"])
-    return [
-        Listing("poshmark", t, parse_price(p[0]), s, u,
-                original_price=parse_price(p[1]) if len(p) > 1 else None, query=q)
-        for (t, p, s), u in zip(cards, urls)
-    ]
+    out = []
+    for i in price_at:
+        url = by_key.get(key(blocks[i - 1]))
+        if not url:
+            continue
+        prices = blocks[i].split("\n")
+        size_lines = blocks[i + 1].split("\n") if i + 1 < len(blocks) else [""]
+        size = size_lines[0].removeprefix("Size:").strip()
+        brand = size_lines[1] if len(size_lines) > 1 else ""
+        out.append(Listing("poshmark", blocks[i - 1], parse_price(prices[0]), size, url,
+                           brand=brand,
+                           original_price=parse_price(prices[1]) if len(prices) > 1 else None,
+                           query=q))
+    return out
 
 
 def _title_from_vinted_url(url: str) -> str:

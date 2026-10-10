@@ -9,7 +9,7 @@ import argparse
 from pathlib import Path
 
 from .formula import MIN_SCORE, evaluate
-from .queries import QUERIES
+from .queries import FOCUS_QUERIES, QUERIES
 from .report import write_csv, write_html
 
 
@@ -17,6 +17,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--from-tinyfish", nargs="+", metavar="JSON",
                     help="parse saved TinyFish fetch results instead of scraping live")
+    ap.add_argument("--focus", action="store_true",
+                    help="run the focus-band searches and keep only focus-band listings")
     ap.add_argument("--sites", nargs="+", default=list(QUERIES), choices=list(QUERIES))
     ap.add_argument("--min-score", type=int, default=MIN_SCORE)
     ap.add_argument("--max-price", type=float, help="drop listings above this price")
@@ -28,7 +30,8 @@ def main():
         listings = load(args.from_tinyfish)
     else:
         from .live import fetch_all
-        listings = fetch_all({s: QUERIES[s] for s in args.sites})
+        queries = FOCUS_QUERIES if args.focus else QUERIES
+        listings = fetch_all({s: queries[s] for s in args.sites})
     listings = [l for l in listings if l.site in args.sites]
 
     seen, unique = set(), []
@@ -39,7 +42,7 @@ def main():
 
     scored = [(l, evaluate(l.title, l.brand, l.size, l.price)) for l in unique]
     matches = [(l, v) for l, v in scored
-               if v.match and v.score >= args.min_score
+               if v.match and v.score >= args.min_score and (v.band or not args.focus)
                and (args.max_price is None or (l.price or 0) <= args.max_price)]
     matches.sort(key=lambda lv: (-lv[1].score, lv[0].price or 0))
 
@@ -49,7 +52,7 @@ def main():
     write_csv(sorted(scored, key=lambda lv: -lv[1].score), out / "all_scored.csv")
     stats = (f"{len(unique)} listings scanned ({len(listings) - len(unique)} duplicates removed), "
              f"{len(matches)} match the formula")
-    write_html(matches, out / "leads.html", stats)
+    write_html(matches, out / "leads.html", stats, focus=args.focus)
     print(stats)
     print(f"wrote {out/'leads.csv'}, {out/'leads.html'}, {out/'all_scored.csv'}")
 

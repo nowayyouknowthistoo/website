@@ -109,6 +109,22 @@ THEMES = {
 }
 
 # --------------------------------------------------------------------------
+# Focus bands: the acts the shop is hunting right now. A hit counts as a music
+# theme and adds FOCUS_BONUS. `--focus` keeps only listings that hit one.
+# --------------------------------------------------------------------------
+FOCUS_BANDS = {
+    "Nirvana": r"nirvana|in utero|nevermind|incesticide|bleach (album|tour)",
+    "Kurt Cobain": r"kurt cobain|\bcobain\b",
+    "Smashing Pumpkins": r"smashing pumpkins|billy corgan|mellon collie|siamese dream|gish\b|\bzero shirt",
+    "Soundgarden": r"soundgarden|chris cornell|badmotorfinger|superunknown|louder than love",
+    "Morrissey": r"morrissey|\bmoz\b",
+    "Butthole Surfers": r"butthole surfers",
+    "The Cranberries": r"cranberries|dolores o.?riordan",
+    "Red Hot Chili Peppers": r"red hot chili|chili peppers|\brhcp\b|blood ?sugar ?sex|californication",
+}
+FOCUS_BONUS = 2
+
+# --------------------------------------------------------------------------
 # Vintage signals (raise the score)
 # --------------------------------------------------------------------------
 VINTAGE_SIGNALS = [
@@ -145,14 +161,18 @@ VINTAGE_YEAR_MAX = 2005
 # --------------------------------------------------------------------------
 RED_FLAGS = [
     (r"vintage[- ]style|vintage[- ]inspired|retro[- ]style|vintage look|retro look", -4),
-    (r"\breprint\b|\brepro\b|reproduction|re-?issue", -4),
+    (r"\breprint\b|\brepro\b|reproduction|re-?issue", -8),
     (r"bootleg[- ]style|rap tee style|y2k style|90s style", -3),
-    (r"\bgildan\b|softstyle|bella ?\+? ?canvas|next level", -2),
-    (r"hot topic|urban outfitters|\bh&m\b|forever 21|target|walmart|primark|spencer", -3),
+    (r"\bgildan\b|softstyle|bella ?\+? ?canvas|next level|comfort colou?rs?", -2),
+    (r"hot topic|urban outfitters|\bh&m\b|forever 21|target|walmart|primark|spencer|\bzara\b|"
+     r"american eagle|daydreamer|shein|boxlunch|lucky brand|pull ?& ?bear|bershka|cotton on|pacsun", -3),
+    (r"upcycle|rework|reworked", -2),
+    # Print-on-demand fakes: new shirts printed with an old date in the title.
+    (r"gift (for|idea)|unisex t-?shirt|\bfan (tee|shirt)|for fans?\b|\bretro\b|shirt for (men|women)", -3),
     (r"\bamplified\b|rock ?off|merch traffic|junk food|\bfifth sun\b|ripple junction", -2),
     (r"\bwomens?\b|\bwomen'?s\b|\bladies\b|\bjuniors?\b|\bgirls?\b", -1),
     (r"long[- ]sleeve|\bls\b", -1),
-    (r"stain|hole|thrashed|distressed|damaged|flaw", -1),
+    (r"stain|\bholes?\b|thrashed|distressed|damaged|flaw", -1),
     (r"oversized", -1),
 ]
 
@@ -172,6 +192,7 @@ class Verdict:
     item_type: str | None
     themes: list[str] = field(default_factory=list)
     reasons: list[str] = field(default_factory=list)
+    band: str = ""
 
 
 def _hit(patterns, text):
@@ -199,8 +220,13 @@ def evaluate(title: str, brand: str = "", size: str = "", price: float | None = 
     if item_type is None:
         return Verdict(False, 0, None, reasons=["not a tee/crewneck/snapback"])
 
-    themes = []
+    band = next((b for b, p in FOCUS_BANDS.items() if re.search(p, text, re.I)), "")
+    themes = ["music"] if band else []
+    if band:
+        reasons.append(f"focus band: {band}")
     for name, pats in THEMES.items():
+        if name in themes:
+            continue
         h = _hit(pats, text)
         if h:
             themes.append(name)
@@ -214,7 +240,7 @@ def evaluate(title: str, brand: str = "", size: str = "", price: float | None = 
     if not themes:
         return Verdict(False, 0, item_type, reasons=["no niche theme"])
 
-    score = 2 + len(themes)
+    score = 2 + len(themes) + (FOCUS_BONUS if band else 0)
     if weak:
         score += 1
         reasons.append(f"+1 {weak.group(0)}")
@@ -229,6 +255,11 @@ def evaluate(title: str, brand: str = "", size: str = "", price: float | None = 
             score += pts
             reasons.append(f"{pts} {m.group(0)}")
 
+    if re.search(r"various sizes|multiple sizes|all sizes", size, re.I):
+        # One listing offered in every size is a print-on-demand shop, not vintage.
+        score -= 6
+        reasons.append("-6 offered in various sizes")
+
     years = [int(y) for y in YEAR.findall(text)]
     if years:
         y = min(years)
@@ -239,7 +270,7 @@ def evaluate(title: str, brand: str = "", size: str = "", price: float | None = 
             score -= 3
             reasons.append(f"-3 modern year {y}")
 
-    return Verdict(score >= MIN_SCORE, score, item_type, themes, reasons)
+    return Verdict(score >= MIN_SCORE, score, item_type, themes, reasons, band)
 
 
 def tier(score: int) -> str:

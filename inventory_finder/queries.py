@@ -27,3 +27,23 @@ QUERIES = {
         "vintage starter snapback",
     ],
 }
+
+
+# Searches for the focus bands (see FOCUS_BANDS in formula.py). Run with --focus.
+FOCUS_QUERIES = {
+    "poshmark": [
+        "vintage nirvana shirt", "vintage nirvana sweatshirt", "nirvana single stitch",
+        "vintage kurt cobain shirt",
+        "vintage smashing pumpkins shirt", "smashing pumpkins sweatshirt",
+        "vintage soundgarden shirt", "soundgarden sweatshirt",
+        "vintage morrissey shirt", "morrissey sweatshirt",
+        "butthole surfers shirt",
+        "vintage cranberries shirt", "cranberries band tee",
+        "vintage red hot chili peppers shirt", "red hot chili peppers sweatshirt",
+    ],
+    "vinted": [
+        "vintage nirvana", "nirvana single stitch", "kurt cobain",
+        "smashing pumpkins", "soundgarden", "morrissey", "butthole surfers",
+        "cranberries band", "vintage red hot chili peppers", "red hot chili peppers crewneck",
+    ],
+}

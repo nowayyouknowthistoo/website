@@ -4,7 +4,7 @@ from datetime import date
 
 from .formula import tier
 
-FIELDS = ["tier", "score", "site", "item_type", "themes", "title", "price", "original_price",
+FIELDS = ["tier", "score", "site", "item_type", "band", "themes", "title", "price", "original_price",
           "size", "condition", "brand", "url", "why", "query"]
 
 
@@ -12,7 +12,7 @@ def rows(scored):
     for l, v in scored:
         yield {
             "tier": tier(v.score), "score": v.score, "site": l.site, "item_type": v.item_type,
-            "themes": ", ".join(v.themes), "title": l.title, "price": l.price,
+            "band": v.band, "themes": ", ".join(v.themes), "title": l.title, "price": l.price,
             "original_price": l.original_price or "", "size": l.size,
             "condition": l.condition, "brand": l.brand, "url": l.url,
             "why": "; ".join(v.reasons), "query": l.query,
@@ -26,25 +26,31 @@ def write_csv(scored, path):
         w.writerows(rows(scored))
 
 
-def write_html(scored, path, stats):
+def write_html(scored, path, stats, focus=False):
     """Self-contained, filterable lead sheet (also publishable as an Artifact)."""
     data = list(rows(scored))
     counts = {k: sum(1 for r in data if r["tier"] == k) for k in ("strong", "possible")}
+    bands = sorted({r["band"] for r in data if r["band"]})
+    band_select = ('<select id="band" aria-label="Band"><option value="">All bands</option>'
+                   + "".join(f'<option>{html.escape(b)}</option>' for b in bands) + "</select>") if bands else ""
+    heading = "Focus band leads" if focus else "Vintage inventory leads"
+    scope = (f"Tees, crewnecks and snapbacks for {', '.join(bands)}" if focus else
+             "Tees, crewnecks and snapbacks from Poshmark and Vinted that fit the music / pop culture / sports / cartoons formula")
     trs = []
     for r in data:
         price = f"${r['price']:.0f}" if r["price"] is not None else "?"
         if r["original_price"]:
             price += f" <s>${r['original_price']:.0f}</s>"
         trs.append(
-            f'<tr data-site="{r["site"]}" data-type="{r["item_type"]}" data-tier="{r["tier"]}" data-price="{r["price"] or 0}">'
+            f'<tr data-site="{r["site"]}" data-type="{r["item_type"]}" data-tier="{r["tier"]}" data-price="{r["price"] or 0}" data-band="{html.escape(r["band"])}">'
             f'<td><span class="pill {r["tier"]}">{r["tier"]}</span><span class="sc">{r["score"]}</span></td>'
             f'<td><a href="{html.escape(r["url"])}" target="_blank" rel="noopener">{html.escape(r["title"])}</a>'
             f'<div class="why">{html.escape(r["why"])}</div></td>'
             f'<td class="n">{price}</td><td>{html.escape(r["size"])}</td>'
-            f'<td>{r["item_type"]}</td><td>{html.escape(r["themes"])}</td>'
+            f'<td>{r["item_type"]}</td><td>{html.escape(r["band"] or r["themes"])}</td>'
             f'<td><span class="site {r["site"]}">{r["site"]}</span></td></tr>'
         )
-    page = f"""<title>Vintage Inventory Leads</title>
+    page = f"""<title>{"Focus Band Leads" if focus else "Vintage Inventory Leads"}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>
@@ -78,26 +84,27 @@ a{{color:var(--fg);text-decoration:none;font-weight:500}} a:hover{{color:var(--a
 .empty{{padding:24px;color:var(--muted);text-align:center}}
 </style>
 <div class="wrapall">
-<header><h1>Vintage inventory leads</h1>
-<p class="sub">Tees, crewnecks and snapbacks from Poshmark and Vinted that fit the music / pop culture / sports / cartoons formula. {stats}. Pulled {date.today():%b %d, %Y}; listings may have sold since.</p></header>
+<header><h1>{heading}</h1>
+<p class="sub">{scope}. {stats}. Pulled {date.today():%b %d, %Y}; listings may have sold since.</p></header>
 <div class="stats"><div class="stat"><b>{counts['strong']}</b><span>strong</span></div><div class="stat"><b>{counts['possible']}</b><span>possible</span></div><div class="stat"><b id="shown">{len(data)}</b><span>showing</span></div></div>
 <div class="filters">
+{band_select}
 <select id="tier" aria-label="Tier"><option value="">All tiers</option><option value="strong">Strong only</option><option value="possible">Possible only</option></select>
 <select id="site" aria-label="Site"><option value="">Both sites</option><option value="poshmark">Poshmark</option><option value="vinted">Vinted</option></select>
 <select id="type" aria-label="Item type"><option value="">All items</option><option value="tee">Tees</option><option value="crewneck">Crewnecks</option><option value="snapback">Snapbacks</option></select>
 <input id="maxp" type="number" min="0" placeholder="Max price $" aria-label="Max price">
 <input id="q" type="search" placeholder="Search titles (e.g. nirvana, starter)" aria-label="Search titles">
 </div>
-<div class="tablewrap"><table><thead><tr><th data-k="score">Lead</th><th>Listing · why it matched</th><th data-k="price">Price</th><th>Size</th><th>Type</th><th>Theme</th><th>Site</th></tr></thead>
+<div class="tablewrap"><table><thead><tr><th data-k="score">Lead</th><th>Listing · why it matched</th><th data-k="price">Price</th><th>Size</th><th>Type</th><th>{"Band" if focus else "Theme"}</th><th>Site</th></tr></thead>
 <tbody id="rows">{''.join(trs)}</tbody></table><div class="empty" id="empty" hidden>No listings match these filters.</div></div>
 </div>
 <script>
 const $=id=>document.getElementById(id);
-function apply(){{const t=$('tier').value,s=$('site').value,ty=$('type').value,m=parseFloat($('maxp').value),q=$('q').value.toLowerCase();let n=0;
+function apply(){{const bd=$('band')?$('band').value:'',t=$('tier').value,s=$('site').value,ty=$('type').value,m=parseFloat($('maxp').value),q=$('q').value.toLowerCase();let n=0;
 for(const tr of $('rows').rows){{const p=parseFloat(tr.dataset.price);
-const hide=(t&&tr.dataset.tier!==t)||(s&&tr.dataset.site!==s)||(ty&&tr.dataset.type!==ty)||(m>=0&&p>m)||(q&&!tr.cells[1].textContent.toLowerCase().includes(q));
+const hide=(bd&&tr.dataset.band!==bd)||(t&&tr.dataset.tier!==t)||(s&&tr.dataset.site!==s)||(ty&&tr.dataset.type!==ty)||(m>=0&&p>m)||(q&&!tr.cells[1].textContent.toLowerCase().includes(q));
 tr.hidden=hide;if(!hide)n++;}}$('shown').textContent=n;$('empty').hidden=n>0;}}
-['tier','site','type','maxp','q'].forEach(i=>$(i).addEventListener('input',apply));
+['band','tier','site','type','maxp','q'].forEach(i=>$(i)&&$(i).addEventListener('input',apply));
 document.querySelectorAll('th').forEach((th,i)=>th.addEventListener('click',()=>{{const b=$('rows'),r=[...b.rows];
 const key=x=>i===0?parseFloat(x.cells[0].querySelector('.sc').textContent):i===2?parseFloat(x.dataset.price):x.cells[i].textContent.toLowerCase();
 const asc=th.dataset.asc!=='1';th.dataset.asc=asc?'1':'0';
