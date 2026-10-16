@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vintage Finder</title>
+<style>
+/* Layout: sticky search + filter bar, status line, then a dense photo grid (gem-style). Palette: washed black + screenprint red. */
+:root{--bg:#f4f3ef;--surface:#fff;--fg:#1a1a18;--muted:#6b6a64;--line:#e2e0d8;--accent:#c2362b;--accent-bg:#fbe7e4;--good:#2d6a3e;--good-bg:#e3f1e6;--chip:#efeee8;
+--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--mono:ui-monospace,SFMono-Regular,Menlo,monospace}
+@media (prefers-color-scheme:dark){:root{--bg:#121211;--surface:#1c1c1a;--fg:#ecebe6;--muted:#9b9a92;--line:#2c2c29;--accent:#ff7a6b;--accent-bg:#3a1f1c;--good:#7fd196;--good-bg:#1b3022;--chip:#262624;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 var(--font)}
+header{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding:12px 16px;display:grid;gap:10px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+h1{font-size:18px;margin:0 12px 0 0;letter-spacing:.02em;text-transform:uppercase}
+input,select{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit}
+#q{flex:1;min-width:180px}
+.chip{border:1px solid var(--line);background:var(--chip);color:var(--fg);border-radius:999px;padding:5px 11px;cursor:pointer;font:inherit;font-size:13px}
+.chip[aria-pressed=true]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#status{color:var(--muted);font-size:12px;padding:8px 16px}
+#status b{color:var(--fg);font-weight:600}
+main{padding:0 16px 40px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;position:relative}
+.card:hover{border-color:var(--muted)}
+.img{aspect-ratio:1;background:var(--chip);object-fit:cover;width:100%;display:block}
+.noimg{aspect-ratio:1;background:var(--chip);display:grid;place-items:center;color:var(--muted);font-size:12px}
+.body{padding:8px 10px 10px;display:grid;gap:5px}
+.top{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.price{font:600 16px var(--mono)} .price s{font-weight:400;font-size:12px;color:var(--muted)}
+.site{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.title{font-size:13px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.meta{font-size:12px;color:var(--muted)}
+.flags{display:flex;flex-wrap:wrap;gap:4px}
+.f{font-size:11px;padding:1px 6px;border-radius:999px;background:var(--chip);color:var(--muted)}
+.f.deal{background:var(--good-bg);color:var(--good);font-weight:600}
+.f.bad{background:var(--accent-bg);color:var(--accent)}
+.new{position:absolute;top:8px;left:8px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px}
+.empty{color:var(--muted);text-align:center;padding:60px 0}
+@media (max-width:600px){header{position:static}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}main{padding:0 8px 40px}
+  #q{min-width:0;width:100%}h1{width:100%}.price{font-size:14px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="row"><h1>Vintage Finder</h1><input id="q" type="search" placeholder="Search titles: sliver, giant tag, lollapalooza…" aria-label="Search titles">
+    <select id="sort" aria-label="Sort"><option value="new">Newest first</option><option value="deal">Best deals</option><option value="score">Most vintage</option><option value="low">Price: low</option><option value="high">Price: high</option></select></div>
+  <div class="row" id="bands"></div>
+  <div class="row">
+    <select id="site" aria-label="Site"><option value="">All sites</option><option>depop</option><option>ebay</option><option>poshmark</option><option>vinted</option></select>
+    <select id="tag" aria-label="Tag"><option value="">Any tag</option><option value="old tag">Old tag (Giant, Brockum…)</option><option value="no tag">No tag / cut tag</option></select>
+    <input id="maxp" type="number" min="0" placeholder="Max $" aria-label="Max price" style="width:90px">
+    <button class="chip" id="hideModern" aria-pressed="true">Hide reprints &amp; modern</button>
+    <button class="chip" id="vintageOnly" aria-pressed="false">Looks 90s only</button>
+    <button class="chip" id="dealsOnly" aria-pressed="false">Underpriced only</button>
+    <button class="chip" id="newOnly" aria-pressed="false">New since last visit</button>
+  </div>
+</header>
+<div id="status">Loading…</div>
+<main><div class="grid" id="grid"></div><div class="empty" id="empty" hidden>Nothing matches these filters yet. New listings appear here automatically.</div></main>
+<script>
+const $ = id => document.getElementById(id);
+let data = [], band = "";
+let lastVisit = 0;
+try { lastVisit = +localStorage.getItem("vf_last_visit") || 0; } catch (e) {}
+const visitStarted = Date.now() / 1000;
+window.addEventListener("beforeunload", () => { try { localStorage.setItem("vf_last_visit", visitStarted); } catch (e) {} });
+
+function ago(t){const s=Date.now()/1000-t;if(s<90)return"just now";if(s<3600)return Math.round(s/60)+"m ago";if(s<86400)return Math.round(s/3600)+"h ago";return Math.round(s/86400)+"d ago";}
+function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function toggle(el){el.addEventListener("click",()=>{el.setAttribute("aria-pressed",el.getAttribute("aria-pressed")!=="true");render();});}
+
+function render(){
+  const q=$("q").value.toLowerCase().trim(), site=$("site").value, tag=$("tag").value, maxp=parseFloat($("maxp").value);
+  const on=id=>$(id).getAttribute("aria-pressed")==="true";
+  let rows=data.filter(r=>(!band||r.band===band)&&(!site||r.site===site)&&(!tag||r.tag===tag)
+    &&!(maxp>=0&&(r.price??1e9)>maxp)&&!(on("hideModern")&&r.modern)&&!(on("vintageOnly")&&r.score<3)
+    &&!(on("dealsOnly")&&!r.flags.includes("underpriced"))&&!(on("newOnly")&&r.first_seen<=lastVisit)
+    &&(!q||(r.title+" "+r.brand+" "+r.descr).toLowerCase().includes(q)));
+  const s=$("sort").value;
+  const by={new:(a,b)=>b.first_seen-a.first_seen,score:(a,b)=>b.score-a.score||b.first_seen-a.first_seen,
+    low:(a,b)=>(a.price??1e9)-(b.price??1e9),high:(a,b)=>(b.price??0)-(a.price??0),
+    deal:(a,b)=>(b.flags.includes("underpriced")-a.flags.includes("underpriced"))||b.score-a.score||(a.price??1e9)-(b.price??1e9)}[s];
+  rows.sort(by);
+  $("grid").innerHTML=rows.slice(0,600).map(r=>{
+    const fl=r.flags.map(f=>`<span class="f ${f==="underpriced"?"deal":f==="modern / reprint"?"bad":""}">${esc(f)}</span>`).join("");
+    const price=r.price!=null?`$${r.price.toFixed(r.price%1?2:0)}${r.was&&r.was>r.price?` <s>$${r.was.toFixed(0)}</s>`:""}`:"?";
+    return `<a class="card" href="${esc(r.url)}" target="_blank" rel="noopener">${r.first_seen>lastVisit&&lastVisit?'<span class="new">NEW</span>':""}
+      ${r.image?`<img class="img" loading="lazy" referrerpolicy="no-referrer" src="${esc(r.image)}" alt="" onerror="this.outerHTML='<div class=noimg>photo on site</div>'">`:'<div class="noimg">no photo</div>'}
+      <div class="body"><div class="top"><span class="price">${price}</span><span class="site">${esc(r.site)}</span></div>
+      <div class="title">${esc(r.title)}</div>
+      <div class="meta">${esc([r.size&&"Size "+r.size,r.brand,ago(r.first_seen)].filter(Boolean).join(" · "))}</div>
+      <div class="flags">${fl}</div></div></a>`;}).join("");
+  $("empty").hidden=rows.length>0;
+  const st=window._status||[];
+  $("status").innerHTML=`<b>${rows.length}</b> of ${data.length} listings · `+(st.length?st.map(x=>`${esc(x.site)} checked ${ago(x.at)}${x.errors?` (${x.errors} blocked)`:""}`).join(" · "):"waiting for the first search pass…");
+}
+
+async function load(){
+  try{
+    const j=await (await fetch("/api/listings")).json();
+    data=j.listings; window._status=j.status;
+    const bands=[...new Set(data.map(r=>r.band))].sort();
+    $("bands").innerHTML=[""].concat(bands).map(b=>`<button class="chip" data-b="${esc(b)}" aria-pressed="${b===band}">${b?esc(b):"All bands"}</button>`).join("");
+    $("bands").querySelectorAll("button").forEach(x=>x.addEventListener("click",()=>{band=x.dataset.b;load();}));
+    render();
+  }catch(e){$("status").textContent="Can't reach the finder. Is it still running?";}
+}
+["q","site","tag","maxp","sort"].forEach(id=>$(id).addEventListener("input",render));
+["hideModern","vintageOnly","dealsOnly","newOnly"].forEach(id=>toggle($(id)));
+load(); setInterval(load,30000);
+</script>
+</body>
+</html>

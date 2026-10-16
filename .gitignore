@@ -1,2 +1,5 @@
 __pycache__/
 *.pyc
+.venv/
+data/vintage_finder.sqlite
+__pycache__/
