@@ -3,3 +3,4 @@ __pycache__/
 .venv/
 data/vintage_finder.sqlite
 __pycache__/
+vintage-finder.zip
