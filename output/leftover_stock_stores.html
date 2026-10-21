@@ -1,0 +1,117 @@
+<title>Leftover Stock Hunting Grounds</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a field guide. Short intro, a category jump bar, then one dense table per kind of shop.
+   Palette: shop-shelf cardboard and price-tag red. */
+:root{--bg:#efece4;--surface:#fbf9f4;--fg:#1c1a16;--muted:#6a6459;--line:#dcd6c9;--accent:#b5372a;--tag:#e7e1d3;--ok:#2f6b3f;--warn:#8a5a00;
+--display:"Anton","Impact","Arial Narrow",sans-serif;--body:"Work Sans",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#13120f;--surface:#1c1a16;--fg:#ece8de;--muted:#a49d90;--line:#2e2b25;--accent:#ff8670;--tag:#28251f;--ok:#86d39b;--warn:#f0c060;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#13120f;--surface:#1c1a16;--fg:#ece8de;--muted:#a49d90;--line:#2e2b25;--accent:#ff8670;--tag:#28251f;--ok:#86d39b;--warn:#f0c060;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--body)}
+.wrap{max-width:1100px;margin:0 auto;padding-block:28px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:22px}
+h1{font:400 42px/1 var(--display);text-transform:uppercase;margin:0;text-wrap:balance}
+h2{font:400 24px/1.1 var(--display);text-transform:uppercase;margin:0;letter-spacing:.01em}
+.sub{color:var(--muted);max-width:72ch;margin:8px 0 0}
+.jump{display:flex;flex-wrap:wrap;gap:6px}
+.jump a{font-size:13px;background:var(--tag);color:var(--fg);border-radius:999px;padding:4px 11px;text-decoration:none}
+.jump a:hover{background:var(--fg);color:var(--bg)}
+section{display:grid;gap:8px}
+.why{color:var(--muted);font-size:14px;margin:0;max-width:80ch}
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:720px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 11px var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+td.name a{color:var(--fg);font-weight:600;text-decoration:none}
+td.name a:hover{color:var(--accent);text-decoration:underline}
+td.name small{display:block;font:12px var(--mono);color:var(--muted)}
+.since{font:600 13px var(--mono);color:var(--accent);white-space:nowrap}
+.look{font-size:14px}
+.st{font:11px var(--mono);white-space:nowrap}
+.st.ok{color:var(--ok)}.st.warn{color:var(--warn)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dead{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:14px;color:var(--muted)}
+.dead b{color:var(--fg)}
+footer{color:var(--muted);font-size:13px;max-width:80ch}
+</style>
+<div class="wrap">
+<header><h1>Leftover stock hunting grounds</h1>
+<p class="sub">Shops in the same mold as Rockabilia, Old Glory, Stylin Online, eil.com and RareVinyl: long-running merch stores, label webstores, record shops and memorabilia dealers that tend to sit on unsold shirts for years. Each one was opened on Oct 21, 2026 to confirm it's still trading. "Where to dig" says where older stock usually ends up on that site.</p></header>
+<nav class="jump" aria-label="Jump to section"><a href="#merch">Licensed merch stores</a><a href="#labels">Label webstores</a><a href="#records">Record stores</a><a href="#memorabilia">Memorabilia &amp; auctions</a><a href="#markets">Old marketplaces</a><a href="#dead">Gone / skip</a></nav>
+
+<section id="merch"><h2>Licensed merch stores</h2>
+<p class="why">Same model as Rockabilia and Old Glory: huge catalogs of officially licensed shirts, where discontinued designs linger in sale sections for years.</p>
+<div class="tablewrap"><table><thead><tr><th>Store</th><th>Since</th><th>Where to dig</th><th>Checked</th></tr></thead><tbody>
+<tr><td class="name"><a href="https://www.80stees.com/" target="_blank" rel="noopener">80sTees.com</a><small>retro licensed tees · US</small></td><td class="since">1999</td><td class="look">Closest match to Stylin Online. Clearance and "new lower prices" pages; music section for band tees.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://liquidblue.com/" target="_blank" rel="noopener">Liquid Blue</a><small>licensed tie-dye maker · US</small></td><td class="since">1988</td><td class="look">Prints its own Grateful Dead, Zeppelin, KISS, Hendrix and Pink Floyd lines. Check DEALS for retired designs; old Liquid Blue band tie-dyes resell well.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.indiemerchstore.com/" target="_blank" rel="noopener">IndieMerchstore</a><small>official metal/heavy merch · US</small></td><td class="since">~2005</td><td class="look">21+ years of Metal Blade-adjacent stock. Sale section and long-sleeve/raglan categories for older runs.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://merchnow.com/" target="_blank" rel="noopener">MerchNow</a><small>merch company + store · US</small></td><td class="since">20+ yrs</td><td class="look">Fulfils for many punk/hardcore bands; browse individual band stores for old designs still listed.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.backstreetmerch.com/" target="_blank" rel="noopener">Backstreet Merch</a><small>official UK merch store</small></td><td class="since">2000s</td><td class="look">"Largest range on the net" UK licensing stock. Site threw an error during the check, so try it in a browser.</td><td class="st warn">partly up</td></tr>
+<tr><td class="name"><a href="https://www.emp-online.com/" target="_blank" rel="noopener">EMP</a><small>rock &amp; metal mail order · EU/UK</small></td><td class="since">1986</td><td class="look">Europe's biggest band-merch mail order. Sale area carries discontinued licensed lines.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.plastichead.com/" target="_blank" rel="noopener">PHD Megastore (Plastic Head)</a><small>UK distributor's retail site</small></td><td class="since">1980s</td><td class="look">100,000+ items from a big UK merch distributor. "Merch Sale" under SALE; A–Z band list.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.impericon.com/" target="_blank" rel="noopener">Impericon</a><small>band merch + streetwear · EU/US</small></td><td class="since">2005</td><td class="look">Sale section; good for 2000s metalcore and nu-metal leftovers.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.nuclearblast.com/" target="_blank" rel="noopener">Nuclear Blast store</a><small>label + metal megastore · EU/US</small></td><td class="since">1987</td><td class="look">"Sale %" tab. Carries Metallica, Manson, Slayer and label back-catalog shirts.</td><td class="st ok">live</td></tr>
+</tbody></table></div></section>
+
+<section id="labels"><h2>Label webstores</h2>
+<p class="why">Labels that have run their own mail order since the 80s and 90s often still have back-stock shirts from old pressings. Look for clearance pages and older catalog numbers.</p>
+<div class="tablewrap"><table><thead><tr><th>Store</th><th>Since</th><th>Where to dig</th><th>Checked</th></tr></thead><tbody>
+<tr><td class="name"><a href="https://megamart.subpop.com/collections/clearance" target="_blank" rel="noopener">Sub Pop Mega Mart</a><small>Seattle · grunge's home label</small></td><td class="since">1988</td><td class="look">Clearance page is live with shirts at $12. Watch for old Sub Pop logo and Loser tees.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://sstsuperstore.com/" target="_blank" rel="noopener">SST Superstore</a><small>Black Flag, Minutemen, Descendents, ALL</small></td><td class="since">1978</td><td class="look">Clothing → T-shirts and Tour Merch. Old-school SST band shirts at about $16.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.relapse.com/" target="_blank" rel="noopener">Relapse Records</a><small>extreme metal label · US</small></td><td class="since">1990</td><td class="look">Merch → "MERCH SALE ITEMS". Long-sleeves section for older runs.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://earache.com/" target="_blank" rel="noopener">Earache Records</a><small>Napalm Death, Carcass, Bolt Thrower · UK</small></td><td class="since">1985</td><td class="look">Merch by band; Earache-era designs for the classic grindcore and death metal roster.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.revelationrecords.com/" target="_blank" rel="noopener">RevHQ (Revelation)</a><small>NYHC: Gorilla Biscuits, Youth of Today, Judge</small></td><td class="since">1987</td><td class="look">Featured webstores per band; the distro also stocks other labels' shirts.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://touchandgorecords.com/" target="_blank" rel="noopener">Touch and Go</a><small>Big Black, Slint, Shellac, Jesus Lizard</small></td><td class="since">1981</td><td class="look">Small store, but the label stopped most releases in 2009, so the shirts there are long-running stock.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://mergerecords.com/" target="_blank" rel="noopener">Merge Records</a><small>Superchunk, Neutral Milk Hotel</small></td><td class="since">1989</td><td class="look">Shop → Deals &amp; Bundles and Band Gear.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://fatwreck.com/" target="_blank" rel="noopener">Fat Wreck Chords</a><small>NOFX, Lagwagon, Strung Out</small></td><td class="since">1990</td><td class="look">Store link from the homepage; 90s skate-punk roster.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.epitaph.com/" target="_blank" rel="noopener">Epitaph Records</a><small>Bad Religion, Rancid, Pennywise</small></td><td class="since">1980</td><td class="look">Apparel → Shirts.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://victoryrecords.com/" target="_blank" rel="noopener">Victory Records</a><small>2000s emo/hardcore: Thursday, Hawthorne Heights</small></td><td class="since">1989</td><td class="look">Good for pre-2010 emo/metalcore designs that never sold through.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://alternativetentacles.com/" target="_blank" rel="noopener">Alternative Tentacles</a><small>Dead Kennedys / Jello Biafra label</small></td><td class="since">1979</td><td class="look">Most shirts are print-on-demand now; the "Mail Order" and artist sections are where older stock shows up.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://dischord.com/" target="_blank" rel="noopener">Dischord</a><small>Fugazi, Minor Threat</small></td><td class="since">1980</td><td class="look">Shirts are sold through Pedestrian Press (linked from Dischord's contact section).</td><td class="st ok">live</td></tr>
+</tbody></table></div></section>
+
+<section id="records"><h2>Record stores</h2>
+<p class="why">Long-running independent stores that sell or buy clothing. Some list merch online; for others it's an in-store dig or a phone call asking about back-room stock.</p>
+<div class="tablewrap"><table><thead><tr><th>Store</th><th>Since</th><th>Where to dig</th><th>Checked</th></tr></thead><tbody>
+<tr><td class="name"><a href="https://diskunion.net/" target="_blank" rel="noopener">Disk Union</a><small>Tokyo chain, 30+ shops · Japan</small></td><td class="since">1960s</td><td class="look">Japanese stores are known for deadstock and used band tees. Punk floor (Shinjuku 7F) and the Heavy Metal shops; the "Goods" (グッズ) section online.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://electricfetus.com/" target="_blank" rel="noopener">Electric Fetus</a><small>Minneapolis</small></td><td class="since">1968</td><td class="look">Shop Gifts → Clothing; they stock boutique clothing alongside records.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.rasputinmusic.com" target="_blank" rel="noopener">Rasputin Music</a><small>6 California stores</small></td><td class="since">1971</td><td class="look">Buys used clothing over the counter, so in-store racks get old band tees. Mostly an in-person stop.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.amoeba.com/" target="_blank" rel="noopener">Amoeba Music</a><small>LA / SF</small></td><td class="since">1990</td><td class="look">Merch section online; in-store used clothing and merch walls.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.newburycomics.com/" target="_blank" rel="noopener">Newbury Comics</a><small>New England chain</small></td><td class="since">1978</td><td class="look">Apparel and merch sections; stores sometimes clear old licensed stock.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.roughtrade.com/en-us" target="_blank" rel="noopener">Rough Trade</a><small>London / NYC</small></td><td class="since">1976</td><td class="look">Merch → Band Merch, and "All Sale".</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://twistandshout.com/" target="_blank" rel="noopener">Twist &amp; Shout</a><small>Denver</small></td><td class="since">1988</td><td class="look">Shop and "Sell Your Stuff"; mostly an in-store dig.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://euclidrecords.com/" target="_blank" rel="noopener">Euclid Records</a><small>St. Louis / New Orleans</small></td><td class="since">1981</td><td class="look">Ask about back stock; online shop is mostly vinyl.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://vintagevinyl.com/" target="_blank" rel="noopener">Vintage Vinyl</a><small>St. Louis</small></td><td class="since">1980</td><td class="look">In-store merch wall; worth a call.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://prex.com/" target="_blank" rel="noopener">Princeton Record Exchange</a><small>Princeton, NJ</small></td><td class="since">1980</td><td class="look">No online shop (only a Discogs page). Buys whole store inventories, so call and ask about shirts.</td><td class="st ok">live</td></tr>
+</tbody></table></div></section>
+
+<section id="memorabilia"><h2>Memorabilia &amp; auctions</h2>
+<p class="why">Dealers and auction houses that handle tour stock and collections straight from industry people. Prices run higher, but the shirts are the real thing.</p>
+<div class="tablewrap"><table><thead><tr><th>Store</th><th>Since</th><th>Where to dig</th><th>Checked</th></tr></thead><tbody>
+<tr><td class="name"><a href="https://www.wolfgangs.com/" target="_blank" rel="noopener">Wolfgang's</a><small>Bill Graham archive</small></td><td class="since">2003</td><td class="look">Concert T-shirts section, including vintage archive tees alongside reproductions. Check which is which.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://itsonlyrocknroll.com/" target="_blank" rel="noopener">It's Only Rock N Roll</a><small>memorabilia dealer · US</small></td><td class="since">1974</td><td class="look">Their own store plus eBay/Etsy; site says prices are lower direct. Ask about clothing.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.backstageauctions.com/" target="_blank" rel="noopener">Backstage Auctions</a><small>artist &amp; industry consignments</small></td><td class="since">2007</td><td class="look">Sells "clothing, tour mementos and promotional swag" straight from musicians and crew; sign up for auction alerts.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://recordmecca.com/" target="_blank" rel="noopener">Recordmecca</a><small>high-end music memorabilia</small></td><td class="since">2000s</td><td class="look">Mostly posters and records; occasional original shirts.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.ha.com/" target="_blank" rel="noopener">Heritage Auctions</a><small>entertainment &amp; music memorabilia</small></td><td class="since">1976</td><td class="look">Search "concert t-shirt" in Entertainment &amp; Music Memorabilia; lots of mixed tees come up.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.tracks.co.uk/" target="_blank" rel="noopener">Tracks</a><small>UK pop memorabilia</small></td><td class="since">1989</td><td class="look">Mostly Beatles; occasional tour merch from other acts.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://tshirtslayer.com/" target="_blank" rel="noopener">TShirtSlayer</a><small>metal shirt collector community</small></td><td class="since">2009</td><td class="look">45,000+ traded or sold items. Collectors list 80s/90s shirts for trade or sale; message them directly.</td><td class="st ok">live</td></tr>
+</tbody></table></div></section>
+
+<section id="markets"><h2>Old marketplaces</h2>
+<p class="why">Older, quieter marketplaces where listings sit for years because nobody searches them. Prices are often from when the item was listed.</p>
+<div class="tablewrap"><table><thead><tr><th>Site</th><th>Since</th><th>Where to dig</th><th>Checked</th></tr></thead><tbody>
+<tr><td class="name"><a href="https://www.tias.com/" target="_blank" rel="noopener">TIAS (The Internet Antique Shop)</a><small>16,500+ dealers</small></td><td class="since">1995</td><td class="look">Search "concert shirt", "rock t-shirt", band names; dealers rarely update prices.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.bonanza.com/" target="_blank" rel="noopener">Bonanza</a><small>25,000+ sellers</small></td><td class="since">2008</td><td class="look">Many sellers mirror old eBay stores here at older prices; search band + "vintage".</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.musicstack.com/" target="_blank" rel="noopener">MusicStack</a><small>record store marketplace</small></td><td class="since">1997</td><td class="look">Record stores list memorabilia here too; search band + "t-shirt".</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://shopgoodwill.com/" target="_blank" rel="noopener">ShopGoodwill</a><small>Goodwill online auctions</small></td><td class="since">1999</td><td class="look">Search "band t-shirt lot" or "concert shirts". Was down for maintenance during the check.</td><td class="st warn">maintenance</td></tr>
+<tr><td class="name"><a href="https://www.liquidation.com/" target="_blank" rel="noopener">Liquidation.com</a><small>wholesale surplus lots</small></td><td class="since">2000s</td><td class="look">Clothing lots from closed stores sometimes include licensed band tees; read the manifests.</td><td class="st ok">live</td></tr>
+<tr><td class="name"><a href="https://www.rubylane.com/" target="_blank" rel="noopener">Ruby Lane</a><small>vintage &amp; antiques mall</small></td><td class="since">1998</td><td class="look">Vintage clothing → search band names. Showed an error page during the check.</td><td class="st warn">error at check</td></tr>
+</tbody></table></div></section>
+
+<section id="dead"><h2>Gone / skip</h2>
+<div class="dead"><b>Interpunk</b> (domain is now a poker spam site) · <b>GEMM</b> (domain for sale) · <b>Loud Clothing</b> (domain now a gambling site) · <b>Rocksax</b> (parked domain) · <b>Kings Road Merch</b> (now only builds stores for bands, no public shop) · <b>Season of Mist</b> (seasonofmist.com is for sale). Didn't load during the check, so try them yourself: Metal Blade, Hells Headbangers, Zia Records, Easy Street Records, Osmose Productions.</div></section>
+
+<footer>Tip: on the big licensed stores, sort sale pages by price low to high, and look for discontinued licensees in titles or tag photos (Giant, Brockum, Winterland, Tultex, Anvil, Signal) and for TV shows and bands of a specific era (Duck Dynasty, iCarly, The Hangover on Old Glory and Rockabilia are 2006–2012 stock).</footer>
+</div>
