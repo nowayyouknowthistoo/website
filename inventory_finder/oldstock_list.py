@@ -185,6 +185,12 @@ S += [
  "Ask for the print year. Small."),
 ]
 
+S += [
+("dead","Closo: Official Store Wholesale lots","https://closo.co/tools/closo/supplier/official-store-wholesale","Same stock as Old Glory, single units","marketplace","b","direct",
+ "A wholesale marketplace page selling the same Westbrook, CT stock as officialstore. It shows <q>3,379 live lots</q>, single NWT units at about $11–17. Older titles seen: Borat <q>Kazakhstan</q> (2006) using Old Glory's own description text, Ghost Rider <q>Chain Reaction</q> (2007), and a Kiss <q>Heroes</q> juniors tee (5 units).",
+ "Search the lots for your titles and compare prices with officialstore.com. Vendor and print year aren't shown."),
+]
+
 # User asked for no sports and no Japanese resellers.
 S = [r for r in S if r[0] not in ("japan","sport") and r[1] != "Mandarake"]
 
