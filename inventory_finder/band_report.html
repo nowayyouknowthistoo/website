@@ -40,15 +40,17 @@ a{color:var(--fg);text-decoration:none;font-weight:500}a:hover{text-decoration:u
 .age{font:12px var(--mono);color:var(--muted);white-space:nowrap}
 .dots{letter-spacing:1px;color:var(--accent)}
 .m{color:var(--muted);font-size:12px}
+.new{font:600 10px var(--mono);background:var(--accent);color:var(--surface);border-radius:3px;padding:1px 5px;letter-spacing:.06em}
 .empty{padding:28px;text-align:center;color:var(--muted)}
 footer{color:var(--muted);font-size:12px;max-width:84ch}
 </style>
 <div class="wrap">
 <header><h1>90s band tee hunt · $80–250</h1>
 <p class="sub">Live listings that claim to be vintage, priced $80 to $250, for 90s grunge, alt, industrial and metal bands. Anything that says modern, reprint, brand new or NWT, or is dated 2000 or later, is left out. Sorted by how many signs of age the listing mentions. You judge authenticity from the photos. Pulled __DATE__.</p></header>
-<div class="counts"><span><b>__TOTAL__</b>listings</span><span><b>__NBANDS__</b>bands</span><span>__SITES__</span></div>
+<div class="counts"><span><b>__NEW__</b>new since last pull</span><span><b>__TOTAL__</b>listings</span><span><b>__NBANDS__</b>bands</span><span>__SITES__</span></div>
 <div class="bands" id="bands"></div>
 <div class="bar">
+<select id="fresh" aria-label="New or all"><option value="">New and earlier</option><option value="new">New since last pull</option></select>
 <select id="site" aria-label="Site"><option value="">All sites</option></select>
 <select id="tag" aria-label="Sign of age"><option value="">Any listing</option><option value="single stitch">Single stitch</option><option value="old tag">Old tag (Giant, Brockum, Winterland…)</option><option value="80s/90s">Dated 80s/90s</option><option value="made in USA">Made in USA</option><option value="bootleg">Bootleg</option><option value="tour shirt">Tour / concert</option><option value="long sleeve">Long sleeve</option></select>
 <select id="size" aria-label="Size"><option value="">Any size</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>2XL+</option></select>
@@ -74,15 +76,15 @@ function sizeKey(s){s=(s||"").toUpperCase();if(/2X|XXL|3X|4X/.test(s))return"2XL
 const STRONG=new Set(["single stitch","old tag","80s/90s","made in USA"]);
 function render(){
   const site=$("site").value,tag=$("tag").value,size=$("size").value,mn=parseFloat($("minp").value),mx=parseFloat($("maxp").value),q=$("q").value.toLowerCase().trim();
-  let rows=DATA.filter(r=>(!band||r.band===band)&&(!site||r.site===site)&&(!tag||r.tags.includes(tag))&&(!size||sizeKey(r.size)===size)
+  let rows=DATA.filter(r=>(!$("fresh").value||r.new)&&(!band||r.band===band)&&(!site||r.site===site)&&(!tag||r.tags.includes(tag))&&(!size||sizeKey(r.size)===size)
     &&!(mn>=0&&r.price<mn)&&!(mx>=0&&r.price>mx)&&(!q||r.title.toLowerCase().includes(q)));
-  rows.sort((a,b)=>{const x=a[sortK]??"",y=b[sortK]??"";return ((x>y?1:x<y?-1:0)*(asc?1:-1))||a.price-b.price;});
+  rows.sort((a,b)=>{const x=a[sortK]??"",y=b[sortK]??"";return (b.new-a.new)||((x>y?1:x<y?-1:0)*(asc?1:-1))||a.price-b.price;});
   $("rows").innerHTML=rows.map(r=>`<tr><td class="price">$${r.price.toFixed(2)}${r.was&&r.was>r.price?`<s>$${r.was.toFixed(2)}</s>`:""}</td>
-    <td><span class="band">${esc(r.band)}</span><br><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a><div>${r.tags.map(t=>`<span class="t${STRONG.has(t)?" strong":""}">${esc(t)}</span>`).join("")}</div></td>
+    <td>${r.new?'<span class="new">NEW</span> ':""}<span class="band">${esc(r.band)}</span><br><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a><div>${r.tags.map(t=>`<span class="t${STRONG.has(t)?" strong":""}">${esc(t)}</span>`).join("")}</div></td>
     <td>${esc(r.size)}</td><td class="age">${esc(r.year)}</td><td class="age"><span class="dots">${"●".repeat(Math.min(r.age_score,8))}</span> ${r.age_score}</td><td class="m">${esc(r.site)}${r.cond?`<br>${esc(r.cond)}`:""}</td></tr>`).join("");
   $("empty").hidden=rows.length>0;$("shown").textContent=`${rows.length} shown`;
 }
-["site","tag","size","minp","maxp","q"].forEach(id=>$(id).addEventListener("input",render));
+["fresh","site","tag","size","minp","maxp","q"].forEach(id=>$(id).addEventListener("input",render));
 document.querySelectorAll("th[data-k]").forEach(th=>th.addEventListener("click",()=>{const k=th.dataset.k;asc=sortK===k?!asc:(k==="price"||k==="band"||k==="site");sortK=k;render();}));
 render();
 </script>

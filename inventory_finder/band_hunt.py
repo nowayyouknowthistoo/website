@@ -17,6 +17,7 @@ from .brockum import ebay_cards, mercari_cards
 
 LOW, HIGH = 80.0, 250.0
 DATA = Path("data/bands90s")
+BASELINE = DATA / "baseline_oct20.json"  # yesterday's list: anything not in it is marked new
 OUT = Path("output/bands90s")
 
 # Band name -> pattern matched against the title. Order matters: first match wins.
@@ -140,8 +141,13 @@ def judge(it):
             "age_score": sum(2 if x in ("single stitch", "old tag", "80s/90s", "made in USA") else 1 for x in tags)}
 
 
-def rows():
-    return sorted(filter(None, map(judge, load_all())), key=lambda r: (-r["age_score"], r["price"]))
+def rows(data_glob_suffix=""):
+    seen = set(json.load(open(BASELINE))["urls"]) if BASELINE.exists() else None
+    out = []
+    for r in filter(None, map(judge, load_all())):
+        r["new"] = seen is not None and r["url"] not in seen
+        out.append(r)
+    return sorted(out, key=lambda r: (not r["new"], -r["age_score"], r["price"]))
 
 
 if __name__ == "__main__" and "--report" not in sys.argv:
@@ -154,7 +160,7 @@ if __name__ == "__main__" and "--report" not in sys.argv:
 def report():
     R = rows()
     OUT.mkdir(parents=True, exist_ok=True)
-    keys = ["band", "site", "price", "was", "size", "cond", "ship", "year", "tags", "age_score", "title", "url"]
+    keys = ["new", "band", "site", "price", "was", "size", "cond", "ship", "year", "tags", "age_score", "title", "url"]
     with open(OUT / "vintage_band_shirts_80_250.csv", "w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=keys, extrasaction="ignore")
         w.writeheader()
@@ -170,6 +176,7 @@ def report():
             .replace("__TOTAL__", str(len(R)))
             .replace("__NBANDS__", str(len(bands)))
             .replace("__SITES__", " · ".join(f"{k} {v}" for k, v in sites.most_common()))
+            .replace("__NEW__", str(sum(r["new"] for r in R)))
             .replace("__DATE__", f"{date.today():%b %d, %Y}"))
     (OUT / "vintage_band_shirts_80_250.html").write_text(page)
     print(len(R), "listings ->", OUT)
