@@ -143,6 +143,48 @@ S += [
  "Condition isn't stated per item, so ask."),
 ]
 
+# ---------- comic-shop round 2 ----------
+S += [
+("pop","Planet X","https://www.eplanetx.net/sandmanivtshirt.html","Comics · Vertigo · Image (Toronto)","1992","a","direct",
+ "A comic and toy shop <q>in operation since 1992</q>, selling its own shop stock through an old Yahoo store, priced in USD. In stock: Graphitti <q>Sandman IV</q> double-sided tee (XXL), Graphitti <q>Arabian Nights Sandman</q> (XL), Sirius Poison Elves <q>Ebola Zaire</q> (1997, XL), a <q>Batman Forever Double-Sided</q> tee (1995, L), a Changes Superman logo tee and a Free Comic Book Day 2009 tee. Sold out but still listed: Marvel 1994 Generation X, Gen 13, Sin City <q>Blam Blam Blam</q>, which shows what they carried. Their own words: <q>Our webstore sells a fraction of the items we have available.</q>",
+ "Check the Sin City, Hellboy, Chaos! Comics, Image and DC/Vertigo categories, and search the site for \"T-Shirt\". Email contact@eplanetx.net about the unlisted shop stock."),
+("call","Kevin Eastman Studios","https://fan.kevineastmanstudios.com/shop/","TMNT · Mirage era","unconfirmed","c","ask",
+ "Has a <q>Classic TMNT – Vintage Overstock</q> section (26 items) and <q>From the Personal Collections of Peter Laird and Kevin Eastman</q> (50 items of 80s–90s Mirage material, many factory sealed). The product lists load by script, so I couldn't see whether any Mirage-era tees are among them. The \"1984\" tees for sale are new reprints.",
+ "Email them asking whether any original Mirage Studios tees are in the overstock."),
+("call","Graham Crackers Comics","https://grahamcrackers.com","Comics (13 stores, IL/WI/CA)","1980s","c","ask",
+ "A 13-store chain whose pages list <q>T-SHIRTS</q> and whole-store sales. Its site search loads by script, so I couldn't check the stock.",
+ "A chain this size with stores this old likely has a back room of old Previews tees. Call and ask."),
+("pop","Emory's Memories","https://www.emorysmemories.com/websale/miscellaneous.htm","Collectibles","unconfirmed","c","direct",
+ "Lists a <q>BATMAN &amp; ROBIN T-SHIRT: Vintage New, Unused – still sealed in the original bag… Graphitti Designs shirt from the early-1990s</q>. Only one piece was seen.",
+ "Small. Ask whether more sealed shirts came in with it."),
+]
+
+# ---------- toy/collectible round ----------
+S += [
+("dead","Official Store Wholesale (Old Glory's wholesale side)","https://officialstore.com/products/rock-band-guitar-head-soft-t-shirt","Cartoons · anime · games · movies","Old Glory-era","a","direct",
+ "Same inventory as oldglory.com (shared SKUs, barcodes and photos) but at <b>wholesale prices, $7–13 a tee</b>, with exact counts per size. It claims <q>over 100,000 unique, in-stock items</q>. Old stock in quantity: Rock Band <q>Guitar Head</q> (2007–08) S 15 / M 121 / XL 46 / 2XL 57; Samurai 7 (c. 2005) S 33 / M 19; Aqua Teen DVD art juniors 50 / 13 / 26; Sealab 2021 (2000–05); Foster's Home for Imaginary Friends (2004–09); Dr. Horrible (2008). There are also mid-2000s licenses like Happy Bunny, Paris Hilton and Jolt.",
+ "Search officialstore.com/search?q= and a show name: Sealab, Harvey Birdman, Hero 108, Fruits Basket, Mashimaro, Happy Tree Friends, Emily the Strange. This is the best bulk source on the list."),
+("pop","Old Glory &amp; Stylin Online: how to find their old stock","https://stylinonline.com/collections/vendors?q=Changes","Your examples","2000s","a","direct",
+ "You know these two already, but both still carry 2000s stock that's easy to miss. <b>Old Glory:</b> add <code>.js</code> to any product URL to see exact units, e.g. Family Guy <q>Bring It On</q> juniors M 34, plus a Stewie tee with an old-format barcode. <b>Stylin Online:</b> the maker pages show <b>257 in-stock items by Changes</b> and <b>301 by Ripple Junction</b>, both 2000s licensees. In stock: Family Guy <q>Weak Powers</q> (2007 Blue Harvest) all sizes $7.99, Borat <q>Wee Waa</q> (2006), Guitar Hero III youth (2007), Battlestar Galactica <q>Frack Me</q> youth $3.99.",
+ "On Stylin, open /collections/vendors?q=Changes (also q=Ripple and q=Headline) and set Availability to In stock. Anything marked down to $3.99–9.99 is clearance dead stock. On Old Glory, filter collections to In stock and check the .js counts. Lower 5-digit SKUs look older."),
+("pop","eStarland","https://www.estarland.com/product-description/AnimeMerchandise/Death-Jr-Head-T-Shirt-X-Large/24651","Anime · games","unconfirmed","b","direct",
+ "(search index) An old game and anime shop with low product IDs. Listings include <q>Death Jr. Head T-Shirt X-Large – $4.95</q> (a 2005 PSP game), <q>Inu Yasha Parchment Background… Previews Exclusive T-Shirt</q> (listed as New), an InuYasha Dragon tee, Hellsing Alucard, Rurouni Kenshin and <q>Marvel vs Capcom</q> tees.",
+ "Google <code>site:estarland.com \"T-Shirt\"</code> plus a title, and check stock in your own browser, because the site blocks bots."),
+]
+
+# ---------- convention round 2 ----------
+S += [
+("call","Who North America","https://www.whona.com/CLEARANCEPROMOS_c_139.html","Doctor Who · UK TV","1998","b","ask",
+ "A US Doctor Who dealer since 1998 with its own warehouse, which still sells <b>1980s FASA Doctor Who miniatures in quantity</b> (e.g. FASA 9507: <q>536 available</q>) in its clearance section. A shop sitting on hundreds of units of 80s stock likely has old apparel too, but none is listed online.",
+ "Email them about back-stock Doctor Who, Red Dwarf and Blake's 7 tees."),
+("call","Doctor Who Store (Alien Entertainment)","https://www.doctorwhostore.com/vintage/","Doctor Who · fan club","1980s","c","ask",
+ "Runs the Chicago TARDIS convention. Its <q>vintage</q> section sells unsold 1980s Doctor Who Fan Club of America buttons, a 1985 promo button, 1996 TV-movie TARDIS keys and 1999 Dalek plaques. Only 2 tees are online, both from after 2010.",
+ "Ask them about leftover fan-club and convention shirts from the 80s and 90s."),
+("call","Filmwelt","https://filmwelt-shop.com","Star Trek (Germany)","unconfirmed","c","direct",
+ "A German Star Trek dealer selling out-of-production Lincoln Enterprises / Roddenberry pins, plus single-size tees such as <q>Vulcan Ale</q> and a <q>Captain Kirk</q> name shirt. The tees' age isn't stated.",
+ "Ask for the print year. Small."),
+]
+
 # User asked for no sports and no Japanese resellers.
 S = [r for r in S if r[0] not in ("japan","sport") and r[1] != "Mandarake"]
 
@@ -154,7 +196,7 @@ SECTIONS = [
  ("music","Band &amp; music","Old record and memorabilia shops with deadstock band tees."),
 ]
 DROPPED = (
- "<b>Now only new or reprinted merch:</b> Creation Entertainment, Highspots, mycomicshop, Mile High Comics, TFAW, Midtown, Forbidden Planet, Fantagraphics, SLG, Fright-Rags, The Who Shop, Old Glory, Liquid Blue, EMP, Nuclear Blast, Impericon, MerchNow, Grindstore, Fun.com.<br>"
+ "<b>Now only new or reprinted merch:</b> Creation Entertainment, Highspots, mycomicshop, Mile High Comics, TFAW, Midtown, Forbidden Planet, Fantagraphics, SLG, Fright-Rags, The Who Shop, Liquid Blue, EMP, Nuclear Blast, Impericon, MerchNow, Grindstore, Fun.com.<br>"
  "<b>From the last list, where you found little old stock:</b> 80sTees, BuyCoolShirts, Rocker Rags, Rock-n-Roll GangStar, Angry Young and Poor, eDeadShop, Metal-shop.eu, Heavy Metal Online, TruffleShuffle, Tracks, Backstage Auctions.<br>"
  "<b>Too little old stock:</b> Recordmecca (one shirt), Ebullition, Abstract Studio, Creation Xena tees, Entertainment Earth and Atomic Empire (old Graphitti tees all sold out).<br>"
  "<b>No tees at all:</b> Larry Edmunds, Dark Delicacies, Hake's, Bud's Art Books, Chuck Jones Gallery, Animazing, Clampett.<br>"
