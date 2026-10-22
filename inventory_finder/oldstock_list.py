@@ -61,9 +61,9 @@ S = [
 ("call","MTC Toys","https://mtctoys.com/t-shirts/","Movies · TV · horror","~35 yrs","b","ask",
  "Known at Comic-Cons as <q>the t-shirt shop</q>: <q>over 1200 t-shirt styles</q> and <q>over 600 clearance tees at prices 40–50% off</q>. Their eBay listings say <q>new old stock from our warehouse, at least 10 years old</q>, but on mouse pads, not tees.",
  "Ask about the 600 clearance tees and any boxed warehouse tee stock. The tees on the website are current reprints."),
-("call","OnHollywood / Star500","https://www.onhollywood.com/store/home.php?cat=3766","Bands · movies (wholesale)","1996","b","wholesale",
+("dead","OnHollywood / Star500","https://www.onhollywood.com/store/home.php?cat=3766","Bands · movies (wholesale)","1996","b","wholesale",
  "Footer reads <q>Copyright © 1996</q>, and the site claims <q>Established 1996 ● 4,000+ items in stock</q>. The clearance page lists Hellraiser, Boondock Saints, Cheech &amp; Chong, Sebastian Bach and Wanted (2008), and the catalog includes Manson <q>Mechanical Animals</q>.",
- "Open a wholesale account, then go through Clearance and Movie &amp; TV Tees. Print years aren't shown."),
+ "Logged out, the search page (onhollywood.com/store/search.php?mode=search&amp;substring=BAND) still shows SKU and remaining sizes. One- or two-size leftovers are old stock (e.g. Amber Pacific: L and XL only). Then open a wholesale account. It listed <q>over 2500 concert t-shirts</q> as far back as 2003."),
 ("call","Bulk Vintage Clothing","https://www.bulkvintage.com/category/deadstock-unworn-vintage.html","Wholesale bundles","2009","b","wholesale",
  "Has a <q>Deadstock NOS Unworn Vintage</q> category, including <q>Deadstock (never worn) Mens 1980s/90s shortsleeve shirts, by the bundle</q>. Their offer: <q>If there is a product you need, but do not see listed, please email us.</q>",
  "Email them asking for deadstock graphic tees and crewnecks specifically."),
@@ -191,15 +191,65 @@ S += [
  "Search the lots for your titles and compare prices with officialstore.com. Vendor and print year aren't shown."),
 ]
 
+# ---------- record shops & promo-shirt dealers ----------
+S += [
+("music","Generation Records","https://www.generationrecords.com/store","Punk · hardcore · metal (NYC)","1992","a","ask",
+ "Their merch page says <q>WE ALSO HAVE THOUSANDS OF SHIRTS AND HUNDREDS OF POSTERS IN STOCK… IN THE PROCESS OF ADDING THAT TO THE SITE.</q> Their Big Cartel store has listed shirts described as <q>Deadstock leftovers from the early 2000's</q> (Danny Diablo / Lord Ezec), plus deadstock 1979–80 records. A July 2025 post: <q>a ton of vintage hardcore shirts</q> going to auction.",
+ "Call (212) 254-1100 or email and ask to buy from the back stock of thousands of shirts. Also watch their eBay auctions."),
+("music","Wex Rex Collectibles","https://wexrex.com/product-category/collectable-rare-t-shirts-limited-edition-vintage-finds/","Rock · promo · radio (MA)","1984","a","ask",
+ "(search index) Founded 1984 by Antiques Roadshow appraiser Gary Sohmers. A Facebook post says <q>we still have 1000 t-shirts available, many at wholesale prices</q>. Listed shirts include a <q>1990-91 AC/DC 'Local Crew' World Tour</q> tee, a 1987 WBCN Rock'n'Roll Rumble tee and a 1977 Stiff Records tee.",
+ "Call (978) 568-3433 and ask about the wholesale shirt stock. This is the most direct bulk lead in the record-shop group."),
+("music","Rare Records","https://www.rarerecords.com.au/search?q=t-shirt","Record shop (Melbourne)","1991; online 1997","a","direct",
+ "A site search for t-shirt returns <b>305 items</b>, each tagged with year and country. Seen: an unworn Michael Jackson <q>HIStory</q> 1994 promo shirt on a Tultex blank (A$143, in stock), a Green Day <q>Insomniac</q> 1995 Australian tour tee, a Metallica <q>Historic Dates</q> 1991 Brockum tee, a signed Mr Bungle 1996 tour tee, and Silverchair 1999 tour shirts.",
+ "Search t-shirt and sort by price, high to low, to bring up the 90s tour, crew and promo shirts. Ships worldwide."),
+("music","Record Palace","https://www.recordpalace.com/en/format/memorabilia/","Record dealer (Sweden)","1989","a","direct",
+ "125 memorabilia items, listed the same way eil does (<q>Promo-only… 100% cotton T-shirt… size L</q>). Seen: Beatles <q>Anthology</q> US and EU promo tees (1996), Beatles <q>1</q> promo tees (2000), McCartney <q>Run Devil Run</q> promo bowling shirt, Pink Floyd <q>Echoes</q>, Ozzy 2000 promo, George Harrison 2000 and Bob Dylan <q>Love and Theft</q> 2001 promo tees.",
+ "Page through all 4 memorabilia pages. Prices are low (about £15–70), so this is the closest match to eil, and cheaper. Mostly 1996–2001."),
+("music","Nostalgipalatset / Trash Palace","https://www.nostalgipalatset.com/en/vintage-t-shirts/","Record &amp; nostalgia shop (Stockholm)","1997 (shop 1981)","b","direct",
+ "Its vintage tee page lists 24 shirts, mostly from the 80s: AC/DC 1988, Def Leppard 1987, Dio 1986, Mötley Crüe 1985, Scorpions 1986, Status Quo 1986, Tina Turner 1987, plus Iggy Pop 1990, The Auteurs 1993, Michael Jackson 1995.",
+ "Open each product page to check condition and price. Ask whether more are in storage."),
+("music","Tracks","https://www.tracks.co.uk/","Memorabilia dealer (UK)","1989","b","direct",
+ "Its promo and crew clothing page has about 70 items: Queen <q>Crazy Tour</q> 1979 (£160), a Michael Jackson <q>Dangerous</q> 1993 crew set of 5 (£395), a Pink Floyd 1988 NZ promo tee (£60), a Yes 1991 crew tee (£50).",
+ "Go to the clothing and promo section. Mid-range prices."),
+("music","Brooks Alley","https://brooksalley.com/search?q=t-shirt&type=product","Estate collection (US)","—","b","direct",
+ "One late collector's archive. A t-shirt search returns 90 results: Rolling Stones <q>Tour of the Americas '75</q> ($250), <q>Voodoo Lounge</q>, Bowie <q>Sound+Vision</q> tour ($275), U2 <q>Zoo TV</q> ($200), Miles Davis tour shirt, and a Roxy Music <q>Country Life</q> promo tee.",
+ "A one-off collection, so stock is finite. Some shirts are after 2000."),
+("music","MusicGoldmine","https://musicgoldmine.com/collections/vintage-tour-clothing","Label &amp; tour clothing (Las Vegas)","—","c","direct",
+ "Mostly record-label tour jackets (CBS, Capitol and Warner 1970s; Styx 1981; New Kids 1990). Few tees, e.g. a Springsteen <q>Born in the USA</q> 84–85 tour tee ($595).",
+ "Jackets more than tees. Pricey."),
+("music","Record Archive","https://recordarchive.com/whats-in-the-store/","Record shop (Rochester, NY)","1975","c","ask",
+ "Its FAQ calls it <q>the best store in town to sell your music memorabilia, from vintage concert t-shirts</q>, and the store has a <q>carefully curated vintage clothing section</q>, sold in store only. It also has an eBay store.",
+ "Call 585-244-1210 and ask what band tees are on the rack and in the back."),
+("music","Turn It Up! Records","https://www.instagram.com/turnituprecords/","Record shop (Calgary)","—","c","ask",
+ "(search index) Posts mention <q>loads of vintage shirts that just hit the racks</q>, priced $50 to over $100. In store only.",
+ "Call 403-235-0858. Mostly used, probably."),
+("music","High Fidelity Records &amp; CDs","https://www.facebook.com/search/top?q=high%20fidelity%20records%20long%20island","Record shop (Long Island)","—","c","ask",
+ "(search index) Bought <q>2,200 new old stock</q> 1980s–90s promo posters when the defunct Music Den store closed (Nov 2020). That shows they buy out closing stores.",
+ "Ask whether the Music Den buyout included promo shirts, and whether they hear of other closing stores."),
+]
+
+# ---------- survivors of the 2000s directories ----------
+S += [
+("dead","Liquid Blue","https://liquidblue.com","Licensed rock tees (maker)","1988","b","direct",
+ "A licensed maker that sells its own warehouse leftovers. Its <q>Mystery Dead Pack</q> ($40 for 3) says: <q>What happens when we find boxes of Liquid Blue tees while cleaning out our warehouse…</q>. The clearance section has 125 items, including AC/DC <q>Blow Up Your Video Tour</q>, Police <q>Synchronicity</q>, Hendrix <q>Little Wing</q> and an Aerosmith <q>World Tour</q> raglan. Its catalog archive has 1994–2000 catalogs you can use to date designs.",
+ "Clearance first. Ask them about buying warehouse boxes in bulk, beyond the 3-packs. Leans Grateful Dead and tie-dye."),
+("call","WickedCoolStuff","https://www.wickedcoolstuff.com","Pop-culture tees (Stylin type)","1999","c","ask",
+ "Listed beside Stylin Online in 2007 directories, founded May 1999. The site is a Yahoo store frozen around 2009: its featured pages are still Dark Knight, Iron Man, Speed Racer and George Bush tees. I couldn't confirm it still ships.",
+ "Email them. If they're winding down, a frozen 2009 shop could have its whole stock sitting in boxes."),
+("music","Merch Connection","https://merchconnectioninc.com","Metal · hardcore","2000s","c","direct",
+ "Online since at least 2007. Mostly current stock, but it runs a <q>Mystery Bargain Bin – Shirts</q> at $2 (sold out when checked).",
+ "Watch for the bargain bin to restock, and ask what's in it."),
+]
+
 # User asked for no sports and no Japanese resellers.
 S = [r for r in S if r[0] not in ("japan","sport") and r[1] != "Mandarake"]
 
 SECTIONS = [
  ("dead","Warehouse finds &amp; unsold stock","The strongest leads: unsold original stock in volume, sold by the company that made or stocked it."),
+ ("music","Record shops &amp; promo-shirt dealers","Record shops and memorabilia dealers with shirt sections: label promo shirts, crew shirts, tour leftovers. A few sell online; most of the old stock is in back rooms, so the call-them leads matter here."),
  ("pop","Comics, movies, TV, anime back-stock","Retailers with old licensed tees still in their catalog. They're smaller than the warehouse finds, but they're the original sellers."),
  ("call","Warehouses to call or email","Most of their old stock isn't listed online. Ask them directly what they have."),
  ("hats","Hats &amp; snapbacks","Deadstock caps from closed stores and old shops. Sports-team caps are included here because you asked for hats."),
- ("music","Band &amp; music","Old record and memorabilia shops with deadstock band tees."),
 ]
 DROPPED = (
  "<b>Now only new or reprinted merch:</b> Creation Entertainment, Highspots, mycomicshop, Mile High Comics, TFAW, Midtown, Forbidden Planet, Fantagraphics, SLG, Fright-Rags, The Who Shop, Liquid Blue, EMP, Nuclear Blast, Impericon, MerchNow, Grindstore, Fun.com.<br>"
@@ -207,7 +257,7 @@ DROPPED = (
  "<b>Too little old stock:</b> Recordmecca (one shirt), Ebullition, Abstract Studio, Creation Xena tees, Entertainment Earth and Atomic Empire (old Graphitti tees all sold out).<br>"
  "<b>No tees at all:</b> Larry Edmunds, Dark Delicacies, Hake's, Bud's Art Books, Chuck Jones Gallery, Animazing, Clampett.<br>"
  "<b>Dead or parked domains:</b> interpunk, loudclothing, rocksax, artrock, hollywoodbookandposter, superheroden, oldschoolskates (\"coming soon\"), merchandisingplaza, concertshirts, metalshirts.<br>"
- "<b>Removed at your request:</b> sports tees and jerseys (Classic Football Shirts, Vintage Club Clothing, RetroStar) and Japanese resale shops (LABORATORY, DEAD STOCK TOKYO, Green Heaven, Bear's Choice, Disk Union, BerBerJin, Beat Bomb). Cozy Vintage stays in the hats section because it wholesales deadstock caps."
+ "<b>2000s band and pop-culture tee shops listed next to Rockabilia, Old Glory and Stylin in 2007–09 web directories, now dead, parked or a different business:</b> rockstarhq, rockmerch.com, swagadelic, wynnco, xanaduonline, concerttee, gearink, goodrock, jiggy, lazycarrot, altamontrecords, fearshop, emerchandise, hollywoodshoppes, retro-stuff.co.uk, number1issue, rottencotton, fusiontees, welovefine, coolrags, starstore, toonstown, musictoday (B2B now), merch.com, jinx, thinkgeek, rocktopic, teemato.<br><b>Removed at your request:</b> sports tees and jerseys (Classic Football Shirts, Vintage Club Clothing, RetroStar) and Japanese resale shops (LABORATORY, DEAD STOCK TOKYO, Green Heaven, Bear's Choice, Disk Union, BerBerJin, Beat Bomb). Cozy Vintage stays in the hats section because it wholesales deadstock caps."
 )
 LV = {"a":("Strong","a"),"b":("Worth a look","b"),"c":("Small / ask","c")}
 HOW = {"direct":"Buy online","proxy":"Via proxy","wholesale":"Wholesale acct","ask":"Contact them"}
