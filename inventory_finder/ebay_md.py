@@ -13,8 +13,15 @@ def listed_on(text, today):
     m = re.search(r"^\s*(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-(\d{1,2}) \d\d:\d\d\s*$", text, re.M)
     if not m:
         return None
-    d = date(today.year, MONTHS[m.group(1)], int(m.group(2)))
-    return d if d <= today else date(today.year - 1, d.month, d.day)
+    mon, day = MONTHS[m.group(1)], int(m.group(2))
+    for year in range(today.year, today.year - 4, -1):  # no year shown; take the latest past date that exists (Feb 29)
+        try:
+            d = date(year, mon, day)
+        except ValueError:
+            continue
+        if d <= today:
+            return d
+    return None
 
 
 def cards(result, today):

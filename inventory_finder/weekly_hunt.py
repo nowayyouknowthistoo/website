@@ -47,13 +47,35 @@ SUBPOP = {
     "Mark Lanegan": r"lanegan", "The Gits": r"\bthe gits\b|mia zapata",
     "Nirvana (Sub Pop era)": r"nirvana.*(sub ?pop|bleach|blew|love buzz|sliver)|(sub ?pop|bleach).*nirvana",
     "Soundgarden (Sub Pop era)": r"soundgarden.*(sub ?pop|screaming life|fopp)",
+    "Sister Double Happiness": r"sister double happiness", "Swallow": r"\bswallow\b.*(band|sub ?pop|seattle)",
+    "Cat Butt": r"cat butt", "Girl Trouble": r"girl trouble.*(band|tacoma|sub ?pop|punk|garage)", "Les Thugs": r"les thugs",
+    "Reverend Horton Heat": r"(reverend|rev\.?) horton heat", "Thee Headcoats / Billy Childish": r"headcoats|billy childish",
+    "Steven Jesse Bernstein": r"jesse bernstein", "Zumpano": r"zumpano", "Kinski": r"\bkinski\b.*(band|sub ?pop|seattle|tour)",
+    "Damien Jurado": r"damien jurado", "The Thermals": r"\bthermals\b", "The Catheters": r"catheters",
+    "Hot Hot Heat": r"hot hot heat", "Beachwood Sparks": r"beachwood sparks", "Pernice Brothers": r"pernice brothers",
+    "Scud Mountain Boys": r"scud mountain", "Rosie Thomas": r"rosie thomas", "Chixdiggit": r"chixdiggit",
+    "Godheadsilo": r"godheadsilo", "Mono Men": r"mono men", "Lamefest": r"lame ?fest",
+}
+SARAH = {
+    "Sarah Records (label)": r"sarah records|\bsarah\b.*(bristol|records|label)", "The Field Mice": r"field mice",
+    "Heavenly": r"\bheavenly\b.*(band|sarah|k records|twee|indie|tour|amelia)", "The Orchids": r"\borchids\b.*(band|sarah|indie|glasgow|tour)",
+    "Another Sunny Day": r"another sunny day", "Blueboy": r"\bblueboy\b.*(band|sarah|indie)", "The Sea Urchins": r"sea urchins",
+    "St. Christopher": r"st\.? christopher.*(band|sarah|indie)", "East River Pipe": r"east river pipe",
+    "The Wake": r"(?<!ashes of )\bthe wake\b.*(band|factory|sarah|indie|tour)", "Even As We Speak": r"even as we speak",
+    "Boyracer": r"boyracer", "The Hit Parade": r"hit parade.*(band|sarah|indie)", "Secret Shine": r"secret shine",
+    "Action Painting!": r"action painting.*(band|sarah)", "Aberdeen": r"\baberdeen\b.*(band|sarah|indie)",
+    "The Springfields": r"springfields.*(band|sarah|indie)", "14 Iced Bears": r"iced bears", "The Poppyheads": r"poppyheads",
+    "Northern Picture Library": r"northern picture library", "Trembling Blue Stars": r"trembling blue stars",
+    "Talulah Gosh": r"talulah gosh", "The Pastels": r"\bpastels\b.*(band|glasgow|indie|tour|53rd|creation)|the pastels",
+    "Brighter": r"\bbrighter\b.*(band|sarah|indie)", "Gentle Despite": r"gentle despite", "Tramway": r"\btramway\b.*(band|sarah)",
+    "The Sweetest Ache": r"sweetest ache", "Shinkansen Records": r"shinkansen records", "C86 / twee": r"(?<!honda )\bc86\b",
 }
 SADE = {"Sade": r"\bsade\b"}
 
 NOT_SHIRT = (r"\b(hat|cap|snapback|beanie|jacket|poster|pins?|patch|sticker|button|program|tour ?book|ticket|vhs|dvd|"
              r"\bcd\b|vinyl|\blp\b|cassette|bandana|bag|backpack|mug|keychain|cards?|flag|tapestry|figure|book|magazine|"
              r"photo|lithograph|pick|toddler|baby|onesie|cardigan|sweater|knit|shorts|pants|socks|dress|skirt|tin set|postcards?|"
-             r"boxers?|pajama|canvas print|hoodie|pullover|zip)\b")
+             r"boxers?|pajama|canvas print|hoodie|pullover|zip|flexi|7\"|nme|record mirror|melody maker|flyer|press photos?|manual|ornaments?)\b")
 MODERN = (r"reprint|re-print|reproduction|\brepro\b|vintage[- ]style|vintage inspired|retro style|\bnwt\b|new with tags|"
           r"brand new|recreation|remake|fan made|custom|handmade|homemade|bravado|hot topic|urban outfitters|"
           r"s-5xl|s ?- ?\dxl|all size|unisex short sleeve|gift for|\b20(0[5-9]|1\d|2\d)\b|"
@@ -70,7 +92,7 @@ AGE = [("single stitch", r"single[- ]?stitch|single stich"), ("80s/90s", r"\b19[
 
 
 # Band names that are also ordinary words: the title must also read like a band shirt.
-AMBIGUOUS = {"Green River", "Postal Service", "Dwarves", "Babes in Toyland", "L7", "Pond", "Tad", "Hazel", "Earth",
+AMBIGUOUS = {"Cat Butt", "Swallow", "Kinski", "Girl Trouble", "The Pastels", "Green River", "Postal Service", "Dwarves", "Babes in Toyland", "L7", "Pond", "Tad", "Hazel", "Earth",
              "Big Chief", "Jale", "Codeine", "Seaweed", "Fluid", "Fastbacks", "Walkabouts", "Thrown Ups"}
 BANDISH = r"\bband\b|tour|concert|sub ?pop|grunge|punk|seattle|\brock\b|album|records?\b|indie|emo|alternative|90s band|\bep\b|single stitch|giant|brockum"
 SADE_JUNK = r"washed|vale (dreams|forever)|valley dream|andre 3000|andré 3000|janelle|whitney|cpfm|aaliyah|png|svg|sublimation"
@@ -151,6 +173,10 @@ def judge(it, bands, need_era=True, any_date=False):
         return None
     if it.get("cond") == "New (Other)" and not re.search(r"deadstock|\bnos\b|19[89]\d", t):
         return None  # mostly new reprints shipped from overseas
+    if not re.search(r"t-?shirt|\btee\b|shirt|longsleeve|ringer|\bl/s\b", t):
+        return None  # Sub Pop / Sarah searches run across all of eBay, so records, flyers and press kits come back too
+    if t.count(",") >= 3:
+        return None  # keyword-stuffed titles ("y2k, twee, sarah records, shoegaze") are modern print shops
     if band in AMBIGUOUS and (not re.search(BANDISH, t) or re.search(r"bardo pond|disney|seven dwarves|festival|usps|day ?care|little charmers|ll ?bean", t)):
         return None
     if key_min(bands) and it["price"] < key_min(bands):
@@ -171,22 +197,25 @@ def judge(it, bands, need_era=True, any_date=False):
 def lists():
     items = load()
     out = {}
-    for key, bands, need in (("bands", CORE, True), ("sade", SADE, True), ("subpop", SUBPOP, False)):
-        q = {"bands": None, "sade": "sade", "subpop": None}[key]
+    for key, bands, need in (("bands", CORE, True), ("sade", SADE, True), ("subpop", SUBPOP, True), ("sarah", SARAH, True)):
         rows = []
         for it in items:
             if key == "sade" and "sade" not in it["query"]:
                 continue
-            if key == "subpop" and it["query"].replace("vintage ", "").replace(" shirt", "") not in SUBPOP_QUERIES:
+            q = it["query"].replace("vintage ", "").replace(" shirt", "")
+            if key == "subpop" and q not in SUBPOP_QUERIES:
                 continue
-            r = judge(it, bands, need, any_date=(key in ("sade", "subpop")))
-            if r and (key != "subpop" or re.search(ERA, r["title"].lower()) or "sub" in r["title"].lower()):
+            if key == "sarah" and q not in SARAH_QUERIES:
+                continue
+            r = judge(it, bands, need, any_date=(key != "bands"))
+            if r:
                 rows.append(r)
         out[key] = sorted(rows, key=lambda r: (r["listed"] or "0"), reverse=True)
     return out
 
 
-SUBPOP_QUERIES = set(json.load(open(DATA / "subpop_queries.json"))) if (DATA / "subpop_queries.json").exists() else set()
+SUBPOP_QUERIES = set(json.load(open(DATA / "subpop_queries.json"))) | set(json.load(open(DATA / "subpop2_queries.json")))
+SARAH_QUERIES = set(json.load(open(DATA / "sarah_queries.json")))
 
 if __name__ == "__main__":
     L = lists()
