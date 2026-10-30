@@ -53,11 +53,11 @@ SADE = {"Sade": r"\bsade\b"}
 NOT_SHIRT = (r"\b(hat|cap|snapback|beanie|jacket|poster|pins?|patch|sticker|button|program|tour ?book|ticket|vhs|dvd|"
              r"\bcd\b|vinyl|\blp\b|cassette|bandana|bag|backpack|mug|keychain|cards?|flag|tapestry|figure|book|magazine|"
              r"photo|lithograph|pick|toddler|baby|onesie|cardigan|sweater|knit|shorts|pants|socks|dress|skirt|tin set|postcards?|"
-             r"boxers?|pajama|canvas print)\b")
+             r"boxers?|pajama|canvas print|hoodie|pullover|zip)\b")
 MODERN = (r"reprint|re-print|reproduction|\brepro\b|vintage[- ]style|vintage inspired|retro style|\bnwt\b|new with tags|"
           r"brand new|recreation|remake|fan made|custom|handmade|homemade|bravado|hot topic|urban outfitters|"
           r"s-5xl|s ?- ?\dxl|all size|unisex short sleeve|gift for|\b20(0[5-9]|1\d|2\d)\b|"
-          r"[‘’'](0[5-9]|1\d|2\d)\b|\b(2010s|2020s)\b|\bmodern\b|cotton tee shirt men women|eleven paris|parody|\byouth\b|\bkids\b|\bcute\b")
+          r"[‘’'](0[5-9]|1\d|2\d)\b|\b(2010s|2020s)\b|\bmodern\b|cotton tee shirt men women|eleven paris|parody|\byouth\b|\bkids\b|\bcute\b|cotton on|anniversary|preowned (small|medium|large|xl)")
 ERA = (r"\b19[89]\d\b|\b200[0-4]\b|\b(80|90)'?s\b|\b(00s|y2k)\b|single[- ]?stitch|single stich|\bvtg\b|vintage|"
        r"\boriginal\b|\bog\b|bootleg|tour|concert|giant|brockum|winterland|screen stars|oneita|tultex|signal|tee jays")
 AGE = [("single stitch", r"single[- ]?stitch|single stich"), ("80s/90s", r"\b19[89]\d\b|\b(80|90)'?s\b"),
@@ -69,10 +69,48 @@ AGE = [("single stitch", r"single[- ]?stitch|single stich"), ("80s/90s", r"\b19[
        ("double sided", r"double[- ]sided|2[- ]sided|front (and|&) back|back print")]
 
 
+# Band names that are also ordinary words: the title must also read like a band shirt.
+AMBIGUOUS = {"Green River", "Postal Service", "Dwarves", "Babes in Toyland", "L7", "Pond", "Tad", "Hazel", "Earth",
+             "Big Chief", "Jale", "Codeine", "Seaweed", "Fluid", "Fastbacks", "Walkabouts", "Thrown Ups"}
+BANDISH = r"\bband\b|tour|concert|sub ?pop|grunge|punk|seattle|\brock\b|album|records?\b|indie|emo|alternative|90s band|\bep\b|single stitch|giant|brockum"
+SADE_JUNK = r"washed|vale (dreams|forever)|valley dream|andre 3000|andré 3000|janelle|whitney|cpfm|aaliyah|png|svg|sublimation"
+
+
+def key_min(bands):
+    return 25 if bands is CORE else 0
+
+
 def posh_date(url):
     """Poshmark listing ids are Mongo ObjectIds: the first 8 hex digits are the creation time."""
     m = re.search(r"-([0-9a-f]{24})$", url)
     return datetime.fromtimestamp(int(m.group(1)[:8], 16), timezone.utc).date() if m else None
+
+
+def mercari_md(result):
+    """Mercari search pages fetched as markdown: after the filter list, each card is a title line optionally
+    followed by a price line ("$60.00$75.00" = sale and original). Item links come in the same order."""
+    text, links = result.get("text") or "", result.get("links") or []
+    urls = []
+    for u in links:
+        m = re.search(r"/us/item/(m\d+)/", u)
+        if m and m.group(1) not in [x[0] for x in urls]:
+            urls.append((m.group(1), f"https://www.mercari.com/us/item/{m.group(1)}/"))
+    body = text.split("\nStatus\n", 1)[-1].split("Sell or buy. Almost anything.")[0]
+    lines = [x.strip() for x in body.split("\n") if x.strip() and not re.fullmatch(r"\d+%", x.strip())]
+    cards = []
+    for x in lines:
+        if x.startswith("$"):
+            price = float(re.match(r"\$([\d,]+\.\d\d)", x).group(1).replace(",", ""))
+            if cards and cards[-1][1] is None:
+                cards[-1][1] = price
+            else:  # a price with no title above it: a card whose title didn't render
+                cards.append([None, price])
+        else:
+            cards.append([x, None])
+    if len(cards) != len(urls):
+        return []
+    return [{"site": "Mercari", "id": i, "url": u, "title": t, "price": p, "size": "", "cond": "", "bids": ""}
+            for (i, u), (t, p) in zip(urls, cards) if t]
 
 
 def load():
@@ -81,12 +119,22 @@ def load():
         for r in json.load(open(f))["results"]:
             for c in ebay_cards(r, TODAY):
                 items.setdefault(c["url"], {**c, "query": re.search(r"nkw=([^&]+)", r["url"]).group(1).replace("+", " ")})
-    for f in sorted(DATA.glob("posh_*.json")):
+    for f in sorted(p for p in DATA.glob("posh_*.json") if "manual" not in p.name):
         for r in json.load(open(f))["results"]:
             for l in parse_poshmark(r):
                 items.setdefault(l.url, {"site": "Poshmark", "id": l.url, "url": l.url, "title": l.title, "price": l.price,
                                          "size": l.size, "brand": l.brand, "cond": "", "bids": "", "where": "",
                                          "listed": posh_date(l.url), "query": l.query})
+    for f in sorted(DATA.glob("posh_*_manual.json")):  # small Poshmark result sets copied by hand
+        for l in json.load(open(f)):
+            items.setdefault(l["url"], {"site": "Poshmark", "id": l["url"], "url": l["url"], "title": l["title"],
+                                        "price": float(l["price"]), "size": l["size"], "brand": "", "cond": "", "bids": "",
+                                        "where": "", "listed": posh_date(l["url"]), "query": "sade"})
+    for f in sorted(DATA.glob("mercmd_*.json")):
+        for r in json.load(open(f))["results"]:
+            for c in mercari_md(r):
+                items.setdefault(c["url"], {**c, "brand": "", "where": "", "listed": None,
+                                            "query": re.search(r"keyword=([^&]+)", r["url"]).group(1).replace("%20", " ").replace("%27", "'")})
     for f in sorted(DATA.glob("merc_*.json")):
         for r in json.load(open(f))["results"]:
             for c in mercari_cards(r.get("text") or ""):
@@ -103,6 +151,12 @@ def judge(it, bands, need_era=True, any_date=False):
         return None
     if it.get("cond") == "New (Other)" and not re.search(r"deadstock|\bnos\b|19[89]\d", t):
         return None  # mostly new reprints shipped from overseas
+    if band in AMBIGUOUS and (not re.search(BANDISH, t) or re.search(r"bardo pond|disney|seven dwarves|festival|usps|day ?care|little charmers|ll ?bean", t)):
+        return None
+    if key_min(bands) and it["price"] < key_min(bands):
+        return None
+    if band == "Sade" and (re.search(SADE_JUNK, t) or it["price"] < 40):
+        return None
     if need_era and not re.search(ERA, full):
         return None
     if not any_date and it["listed"] and it["listed"] < SINCE:
@@ -117,7 +171,7 @@ def judge(it, bands, need_era=True, any_date=False):
 def lists():
     items = load()
     out = {}
-    for key, bands, need in (("bands", CORE, True), ("sade", SADE, False), ("subpop", SUBPOP, False)):
+    for key, bands, need in (("bands", CORE, True), ("sade", SADE, True), ("subpop", SUBPOP, False)):
         q = {"bands": None, "sade": "sade", "subpop": None}[key]
         rows = []
         for it in items:
@@ -125,7 +179,7 @@ def lists():
                 continue
             if key == "subpop" and it["query"].replace("vintage ", "").replace(" shirt", "") not in SUBPOP_QUERIES:
                 continue
-            r = judge(it, bands, need, any_date=(key == "sade"))
+            r = judge(it, bands, need, any_date=(key in ("sade", "subpop")))
             if r and (key != "subpop" or re.search(ERA, r["title"].lower()) or "sub" in r["title"].lower()):
                 rows.append(r)
         out[key] = sorted(rows, key=lambda r: (r["listed"] or "0"), reverse=True)
