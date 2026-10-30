@@ -1,0 +1,95 @@
+<title>Weekly Vintage Hunt</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: three tabbed buyer's sheets (bands / Sade / Sub Pop). Chips for bands, a sticky filter bar, one dense table.
+   Palette: washed black tee on newsprint, faded screenprint red, bleached blue. */
+:root{--bg:#eeece6;--surface:#fbfaf6;--fg:#1a1917;--muted:#69655c;--line:#dcd8ce;--accent:#b8352a;--blue:#355f8f;--chip:#e6e2d8;--on:#1a1917;--onfg:#fbfaf6;
+--display:"Anton","Impact","Arial Narrow",sans-serif;--body:"Work Sans",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121110;--surface:#1b1a18;--fg:#ebe8e1;--muted:#a19c91;--line:#2d2b27;--accent:#ff8670;--blue:#8db4e4;--chip:#26241f;--on:#ebe8e1;--onfg:#121110;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121110;--surface:#1b1a18;--fg:#ebe8e1;--muted:#a19c91;--line:#2d2b27;--accent:#ff8670;--blue:#8db4e4;--chip:#26241f;--on:#ebe8e1;--onfg:#121110;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font:14px/1.45 var(--body)}
+.wrap{max-width:1200px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:14px}
+h1{font:400 40px/1 var(--display);text-transform:uppercase;margin:0}
+.sub{color:var(--muted);margin:6px 0 0;max-width:80ch}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tab{font:400 18px var(--display);text-transform:uppercase;letter-spacing:.02em;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px;padding:8px 14px;cursor:pointer}
+.tab small{font:600 12px var(--mono);color:var(--muted);margin-left:6px}
+.tab[aria-selected="true"]{background:var(--on);color:var(--onfg);border-color:var(--on)}.tab[aria-selected="true"] small{color:inherit;opacity:.7}
+.note{color:var(--muted);font-size:13px;margin:0;max-width:90ch}
+.bands{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--chip);color:var(--fg);border-radius:999px;padding:4px 10px;font:inherit;font-size:12px;cursor:pointer}
+.chip small{color:var(--muted);font-family:var(--mono);margin-left:4px}
+.chip[aria-pressed="true"]{background:var(--on);color:var(--onfg);border-color:var(--on)}.chip[aria-pressed="true"] small{color:inherit;opacity:.7}
+.bar{position:sticky;top:0;z-index:3;background:var(--bg);padding-block:8px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-bottom:1px solid var(--line)}
+.bar select,.bar input{background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;font:inherit;min-width:0}
+#q{flex:1 1 200px}#shown{font:12px var(--mono);color:var(--muted);margin-left:auto}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tablewrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:800px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 11px var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);white-space:nowrap;cursor:pointer;user-select:none}
+tr:last-child td{border-bottom:0}
+td.price{font:600 15px var(--mono);color:var(--accent);white-space:nowrap}
+.band{font:400 13px var(--display);text-transform:uppercase;letter-spacing:.04em;color:var(--blue)}
+a{color:var(--fg);text-decoration:none;font-weight:500}a:hover{text-decoration:underline;color:var(--accent)}
+.t{display:inline-block;font-size:11px;background:var(--chip);color:var(--muted);border-radius:999px;padding:1px 7px;margin:3px 4px 0 0}.t.s{color:var(--fg);font-weight:600}
+.m{color:var(--muted);font-size:12px}.d{font:12px var(--mono);white-space:nowrap}
+.dots{color:var(--accent);letter-spacing:1px}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+footer{color:var(--muted);font-size:12px;max-width:90ch}
+</style>
+<div class="wrap">
+<header><h1>This week's vintage pulls</h1>
+<p class="sub">Listings put up on eBay, Poshmark and Mercari between __SINCE__ and __TODAY__ that claim to be original 80s, 90s or early-00s shirts. Reprints, "S–5XL" print shops, anything dated 2005 or later, and non-shirts are left out. Newest first. You judge authenticity from the photos.</p></header>
+<div class="tabs" role="tablist" id="tabs"></div>
+<p class="note" id="note"></p>
+<div class="bands" id="bands"></div>
+<div class="bar">
+<select id="site" aria-label="Site"><option value="">All sites</option></select>
+<select id="tag" aria-label="Sign of age"><option value="">Any listing</option><option>single stitch</option><option>old tag</option><option>80s/90s</option><option>early 00s</option><option>made in USA</option><option>tour / concert</option><option>bootleg</option><option>long sleeve</option><option>double sided</option></select>
+<input id="minp" type="number" min="0" placeholder="Min $" aria-label="Min price" style="width:80px">
+<input id="maxp" type="number" min="0" placeholder="Max $" aria-label="Max price" style="width:80px">
+<input id="q" type="search" placeholder="Search titles: tour, 1994, giant, in utero…" aria-label="Search titles">
+<span id="shown"></span>
+</div>
+<div class="tablewrap"><table><thead><tr><th data-k="listed">Listed</th><th data-k="price">Price</th><th data-k="band">Band · listing</th><th data-k="size">Size</th><th data-k="score">Signs of age</th><th data-k="site">Site</th></tr></thead>
+<tbody id="rows"></tbody></table><div class="empty" id="empty" hidden>No listings match these filters.</div></div>
+<footer>Listing dates come from eBay's start time and from the creation time encoded in Poshmark's listing id. Mercari doesn't show dates, so Mercari rows are its newest results. "Signs of age" are the seller's own words (single stitch, old tag brands, dates, made in USA), so check the tag, hem and print in the photos. eBay prices are before shipping.</footer>
+</div>
+<script>
+const DATA=__DATA__;
+const NOTES={bands:"Nirvana, Smashing Pumpkins, Green Day, Soundgarden, Radiohead, Pixies, Marilyn Manson, Dinosaur Jr, plus Sonic Youth, Pavement, Hole, Weezer, Alice in Chains, Pearl Jam, NIN, Breeders, Beck, Melvins, STP, Foo Fighters, Jane's Addiction, Mudhoney. Must claim 80s, 90s or early 00s.",
+sade:"Every vintage-claimed Sade shirt found, any price and any date. Sade shirts are rare, so this list isn't limited to the past week.",
+subpop:"Bands that were on Sub Pop, searched by band name since sellers rarely write Sub Pop in the title, plus Sub Pop's own label shirts (Loser and so on). Earlier bands' Sub Pop-era Nirvana and Soundgarden shirts are included."};
+const LABEL={bands:"90s bands",sade:"Sade",subpop:"Sub Pop"};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const STRONG=new Set(["single stitch","old tag","80s/90s","made in USA"]);
+let list="bands",band="",sortK="listed",asc=false;
+$("tabs").innerHTML=Object.keys(DATA).map(k=>`<button class="tab" role="tab" data-k="${k}" aria-selected="${k===list}">${LABEL[k]}<small>${DATA[k].length}</small></button>`).join("");
+$("tabs").querySelectorAll(".tab").forEach(b=>b.onclick=()=>{list=b.dataset.k;band="";$("tabs").querySelectorAll(".tab").forEach(x=>x.setAttribute("aria-selected",x===b));setup();});
+function setup(){
+  const D=DATA[list],c={};D.forEach(r=>c[r.band]=(c[r.band]||0)+1);
+  $("note").textContent=NOTES[list];
+  const bs=Object.keys(c).sort((a,b)=>c[b]-c[a]);
+  $("bands").innerHTML=bs.length>1?[""].concat(bs).map(b=>`<button class="chip" data-b="${esc(b)}" aria-pressed="${b===band}">${b?esc(b):"All"}<small>${b?c[b]:D.length}</small></button>`).join(""):"";
+  $("bands").querySelectorAll(".chip").forEach(x=>x.onclick=()=>{band=x.dataset.b;$("bands").querySelectorAll(".chip").forEach(y=>y.setAttribute("aria-pressed",y===x));render();});
+  $("site").innerHTML='<option value="">All sites</option>'+[...new Set(D.map(r=>r.site))].sort().map(s=>`<option>${esc(s)}</option>`).join("");
+  render();
+}
+function render(){
+  const site=$("site").value,tag=$("tag").value,mn=parseFloat($("minp").value),mx=parseFloat($("maxp").value),q=$("q").value.toLowerCase().trim();
+  let R=DATA[list].filter(r=>(!band||r.band===band)&&(!site||r.site===site)&&(!tag||r.tags.includes(tag))&&!(mn>=0&&r.price<mn)&&!(mx>=0&&r.price>mx)&&(!q||r.title.toLowerCase().includes(q)));
+  R.sort((a,b)=>{const x=a[sortK]??"",y=b[sortK]??"";return ((x>y?1:x<y?-1:0)*(asc?1:-1))||b.score-a.score;});
+  $("rows").innerHTML=R.map(r=>`<tr><td class="d">${r.listed?esc(r.listed.slice(5)):"newest"}</td><td class="price">$${r.price.toFixed(2)}</td>
+  <td><span class="band">${esc(r.band)}</span><br><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a><div>${r.tags.map(t=>`<span class="t${STRONG.has(t)?" s":""}">${esc(t)}</span>`).join("")}</div></td>
+  <td>${esc(r.size)}${r.brand?`<div class="m">${esc(r.brand)}</div>`:""}</td><td class="d"><span class="dots">${"●".repeat(Math.min(r.score,8))}</span> ${r.score}</td>
+  <td class="m">${esc(r.site)}${r.where?`<br>${esc(r.where)}`:""}${r.bids?`<br>${esc(r.bids)}`:""}</td></tr>`).join("");
+  $("empty").hidden=R.length>0;$("shown").textContent=`${R.length} shown`;
+}
+["site","tag","minp","maxp","q"].forEach(id=>$(id).addEventListener("input",render));
+document.querySelectorAll("th[data-k]").forEach(th=>th.onclick=()=>{const k=th.dataset.k;asc=sortK===k?!asc:(k==="price"||k==="band"||k==="site");sortK=k;render();});
+setup();
+</script>
