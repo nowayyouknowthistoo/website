@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Second Pressing Vintage</title>
+  <meta name="description" content="One-of-one vintage band tees from the 80s and 90s, measured, graded and photographed.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="announce">Every piece is one of one &middot; Free US shipping over $150</div>
+
+  <header class="site-header">
+    <div class="wrap header-row">
+      <button class="icon-btn menu-btn" aria-label="Menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="22" height="22"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+      </button>
+      <a href="#/" class="logo" aria-label="Home">SECOND<span>PRESSING</span></a>
+      <nav class="main-nav">
+        <a href="#/shop">Shop all</a>
+        <a href="#/shop?era=80s">80s</a>
+        <a href="#/shop?era=90s">90s</a>
+        <a href="#/shop?sold=1">Archive</a>
+        <a href="#/info">Info</a>
+      </nav>
+      <a href="#/cart" class="cart-link" aria-label="Cart">
+        Bag <span class="cart-count">0</span>
+      </a>
+    </div>
+  </header>
+
+  <main id="app" class="wrap"></main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-grid">
+      <div>
+        <div class="logo small">SECOND<span>PRESSING</span></div>
+        <p class="muted">Vintage band tees, sourced one at a time. Every shirt is checked for tag, stitch and print before it's listed.</p>
+      </div>
+      <div>
+        <h4>Shop</h4>
+        <a href="#/shop">All tees</a>
+        <a href="#/shop?era=80s">80s</a>
+        <a href="#/shop?era=90s">90s</a>
+        <a href="#/shop?sold=1">Sold archive</a>
+      </div>
+      <div>
+        <h4>Help</h4>
+        <a href="#/info">Shipping &amp; returns</a>
+        <a href="#/info">Sizing guide</a>
+        <a href="#/info">Condition grading</a>
+      </div>
+      <form class="newsletter" onsubmit="event.preventDefault(); this.querySelector('button').textContent='You’re on the list'; this.reset();">
+        <h4>Drop alerts</h4>
+        <p class="muted">New tees go up in weekly drops. Get the list first.</p>
+        <div class="nl-row">
+          <input type="email" required placeholder="Email address" aria-label="Email address">
+          <button type="submit">Join</button>
+        </div>
+      </form>
+    </div>
+    <div class="wrap fine">&copy; <span id="yr"></span> Second Pressing Vintage. Band names belong to their owners; we sell original secondhand merchandise.</div>
+  </footer>
+
+  <script src="products.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
