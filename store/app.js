@@ -142,7 +142,7 @@
       if (state.sold) qs.push("sold=1");
       if (state.q) qs.push("q=" + encodeURIComponent(state.q));
       if (state.sort !== "new") qs.push("sort=" + state.sort);
-      history.replaceState(null, "", "#/shop" + (qs.length ? "?" + qs.join("&") : ""));
+      try { history.replaceState(null, "", "#/shop" + (qs.length ? "?" + qs.join("&") : "")); } catch (e) {}
     }
 
     $(".shop-root").addEventListener("change", function (e) {
