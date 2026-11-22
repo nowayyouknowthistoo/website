@@ -1,6 +1,7 @@
 """Local web page: http://localhost:<PORT>/ shows the listings.
 
-  GET  /api/listings[?after=<unix time>]   listings (only newer ones with after), status and watches
+  GET  /api/listings[?after=<unix time>][&old=1]   newly posted listings (only newer ones with after;
+                                                   old=1 adds what was already up), status and watches
   POST /api/watch    {"add": "..."} or {"remove": "..."}   change the Watch list
 """
 
@@ -27,8 +28,10 @@ def serve(store, port):
         def do_GET(self):
             u = urlparse(self.path)
             if u.path == "/api/listings":
-                after = float((parse_qs(u.query).get("after") or ["0"])[0] or 0)
-                self.reply(json.dumps({"listings": store.listings(after=after), "status": store.status(),
+                qs = parse_qs(u.query)
+                after = float((qs.get("after") or ["0"])[0] or 0)
+                old = (qs.get("old") or ["0"])[0] == "1"
+                self.reply(json.dumps({"listings": store.listings(after=after, include_old=old), "status": store.status(),
                                        "watches": load_watches(), "now": time.time()}).encode())
             elif u.path in ("/", "/index.html"):
                 self.reply(PAGE.encode(), "text/html; charset=utf-8")

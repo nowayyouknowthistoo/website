@@ -29,6 +29,8 @@ SEARCHES = {
     "The Cranberries": ["vintage cranberries shirt", "cranberries 1995 shirt"],
     "Siouxsie": ["vintage siouxsie shirt", "siouxsie and the banshees shirt"],
     "Wu-Tang": ["vintage wu tang shirt", "wu wear vintage"],
+    "Metallica": ["vintage metallica shirt", "metallica single stitch", "metallica 1991 shirt"],
+    "Pink Floyd": ["vintage pink floyd shirt", "pink floyd 1994 shirt", "pink floyd single stitch"],
     "Rap tees": [
         "vintage tupac shirt", "tupac memorial shirt", "vintage 2pac shirt", "vintage biggie shirt", "vintage dr dre shirt",
         "vintage rap tee", "vintage snoop dogg shirt",
@@ -38,7 +40,7 @@ SEARCHES = {
 # Broad searches that catch any band, re-run about once a minute on every site so new listings show up fast.
 # Shirts from bands not listed above are kept too (shown as "Other band").
 FRESH = [
-    "vintage band tee", "vintage band shirt", "single stitch band tee", "90s band t shirt",
+    "band shirt", "band t shirt", "vintage t shirt", "vintage band tee", "single stitch band tee",
     "vintage concert shirt", "vintage tour shirt", "vintage rap tee",
 ]
 
@@ -46,8 +48,9 @@ SITES = ["depop", "ebay", "poshmark", "vinted"]
 
 # Each site runs in its own loop, one request every REQUEST_GAP_SECONDS. Searches are re-run on these timers:
 WATCH_SECONDS = 45        # searches you add in the page's Watch box (top priority)
-FRESH_SECONDS = 60        # the broad FRESH searches
-BAND_SECONDS = 600        # the per-band SEARCHES above
+FRESH_SECONDS = 90        # the broad FRESH searches
+MAIN_SECONDS = 120        # the first search listed for each band
+BAND_SECONDS = 900        # that band's other searches (misspellings, years, tags)
 REQUEST_GAP_SECONDS = 3   # pause between requests to the same site so it doesn't block you
 WATCHES_PATH = "data/watches.json"
 PORT = 8765

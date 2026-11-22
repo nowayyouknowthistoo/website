@@ -1,18 +1,20 @@
 # Vintage Finder
 
-A gem.com-style search page for vintage band and rap shirts that runs on your own computer. It searches
-Depop, eBay, Poshmark and Vinted **non-stop**, newest first, and new finds appear on the page within seconds
-(the page checks for new listings every 3 seconds; turn on **Sound on new** for a ping).
+An inbox of **newly posted** vintage shirts from Depop, eBay, Poshmark and Vinted, running on your own computer.
 
-- **Watch box:** type any search (a band, a tour, a year, a misspelling) and press Watch. It's searched on every
-  site right away and then about every 45 seconds, ahead of everything else. Remove it with ×.
-- **Fresh searches:** broad searches like "vintage band tee", "single stitch band tee", "vintage concert shirt" and
-  "vintage rap tee" run about once a minute on every site, so shirts from bands *not* on your list still show up
-  (under **Other band**).
-- **Your band list** (Nirvana, Sade, Sub Pop bands, Pumpkins, Soundgarden, Oasis, Green Day, Radiohead, NIN,
-  Wu-Tang, Tupac and other rap tees, and more) is searched in rotation, each search about every 10 minutes.
-- **Hide reprints & modern**, **Looks 90s only**, **Underpriced only**, **New since last visit**, tag filter
-  (old tag / no tag), site and max price filters.
+- **Only new posts.** The first time each search runs, it just learns what's already listed (hidden). From then on,
+  anything that shows up is a fresh post and lands in your inbox. "Include ones already up" shows the rest.
+- **Look, then refresh.** The page checks every 3 seconds but doesn't move while you're looking. New finds collect in
+  the red **▲ N new shirts posted — show** button at the top (and the tab title). Click it, or press **R**, to see them.
+  Listings you've opened are dimmed; "Hide ones I opened" removes them.
+- **Search for anything.** Type in the **Watch** box: a band, "t shirt", "band shirt", "metallica", "pink floyd", a
+  misspelling. It's searched on every site right away and then about every 45 seconds.
+- **Not limited to band names.** Broad searches ("band shirt", "vintage t shirt", "vintage concert shirt", "vintage rap
+  tee"…) run about every 90 seconds, and every shirt they find is kept even if the title doesn't name a band
+  (shown as **Other band**). Only non-shirts (hats, pants, shoes, posters, vinyl…) are dropped.
+- **Your bands** (Nirvana, Sade, Sub Pop bands, Pumpkins, Soundgarden, Oasis, Green Day, Radiohead, NIN, Metallica,
+  Pink Floyd, Wu-Tang, Tupac and other rap tees, and more) are each checked about every 2 minutes.
+- Filters: hide reprints & modern, looks 90s only, underpriced only, old tag / no tag, site, max price, sound on new.
 
 ## Start it
 

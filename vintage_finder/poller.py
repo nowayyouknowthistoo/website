@@ -33,14 +33,15 @@ def jobs():
     """(query, band hint, re-run interval) for everything that should be searched."""
     out = [(w, w.title(), config.WATCH_SECONDS) for w in load_watches()]
     out += [(q, None, config.FRESH_SECONDS) for q in config.FRESH]
-    out += [(q, band, config.BAND_SECONDS) for band, qs in config.SEARCHES.items() for q in qs]
+    out += [(q, band, config.MAIN_SECONDS if i == 0 else config.BAND_SECONDS)
+            for band, qs in config.SEARCHES.items() for i, q in enumerate(qs)]
     return out
 
 
 def run_one(store, site, s, q, band, log=print):
     try:
         items = SOURCES[site].search(q, s)
-        new = store.save(items, query=q, band_hint=band)
+        new = store.save(items, query=q, band_hint=band, site=site)
         store.log_run(site, q, len(items), new)
         if new:
             log(f"  {site:8} +{new:3} new  '{q}'")

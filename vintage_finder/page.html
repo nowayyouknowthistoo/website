@@ -43,17 +43,19 @@ main{padding:0 16px 40px}
 .watch{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--accent);color:var(--accent);background:var(--accent-bg);border-radius:999px;padding:4px 6px 4px 11px;font-size:13px}
 .watch button{border:0;background:none;color:inherit;cursor:pointer;font:inherit;font-size:15px;line-height:1;padding:0 4px}
 .lbl{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-#toast{position:fixed;right:16px;bottom:16px;background:var(--fg);color:var(--bg);padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+#more{position:sticky;top:8px;z-index:6;display:block;margin:10px auto;background:var(--accent);color:#fff;border:0;padding:10px 18px;border-radius:999px;font:600 14px var(--font);cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.card.opened{opacity:.45}.card.opened:hover{opacity:.8}
+.batch{grid-column:1/-1;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;border-top:1px solid var(--line);padding-top:8px;margin-top:4px}
 @media (max-width:600px){header{position:static}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}main{padding:0 8px 40px}
   #q{min-width:0;width:100%}h1{width:100%}.price{font-size:14px}}
 </style>
 </head>
 <body>
 <header>
-  <div class="row"><h1>Vintage Finder</h1><input id="q" type="search" placeholder="Search titles: sliver, giant tag, lollapalooza…" aria-label="Search titles">
-    <select id="sort" aria-label="Sort"><option value="new">Newest first</option><option value="deal">Best deals</option><option value="score">Most vintage</option><option value="low">Price: low</option><option value="high">Price: high</option></select></div>
+  <div class="row"><h1>Vintage Finder</h1><input id="q" type="search" placeholder="Filter what's shown: sliver, giant tag, xl…" aria-label="Search titles">
+    <select id="sort" aria-label="Sort"><option value="new">Newest posted first</option><option value="deal">Best deals</option><option value="score">Most vintage</option><option value="low">Price: low</option><option value="high">Price: high</option></select></div>
   <div class="row"><span class="lbl">Watch</span>
-    <form id="watchForm"><input id="watchIn" placeholder="Add a search: dickless shirt, sade 1993, wu tang 1997…" aria-label="Add a search to watch"><button class="chip" type="submit">Watch</button></form>
+    <form id="watchForm"><input id="watchIn" placeholder="Search new posts for anything: t shirt, band shirt, metallica, pink floyd…" aria-label="Add a search to watch"><button class="chip" type="submit">Watch</button></form>
     <span id="watches" class="row"></span></div>
   <div class="row" id="bands"></div>
   <div class="row">
@@ -63,57 +65,64 @@ main{padding:0 16px 40px}
     <button class="chip" id="hideModern" aria-pressed="true">Hide reprints &amp; modern</button>
     <button class="chip" id="vintageOnly" aria-pressed="false">Looks 90s only</button>
     <button class="chip" id="dealsOnly" aria-pressed="false">Underpriced only</button>
-    <button class="chip" id="newOnly" aria-pressed="false">New since last visit</button>
+    <button class="chip" id="hideOpened" aria-pressed="false">Hide ones I opened</button>
+    <button class="chip" id="showOld" aria-pressed="false">Include ones already up</button>
     <button class="chip" id="ping" aria-pressed="false">Sound on new</button>
   </div>
 </header>
 <div id="status">Loading…</div>
-<div id="toast" hidden></div>
-<main><div class="grid" id="grid"></div><div class="empty" id="empty" hidden>Nothing matches these filters yet. New listings appear here within seconds of being found.</div></main>
+<main><button id="more" hidden></button><div class="grid" id="grid"></div><div class="empty" id="empty" hidden>Nothing new yet. Only shirts posted after the finder started show here: the first look at each search just learns what's already up. New ones collect in the red button at the top; click it (or press R) to see them.</div></main>
 <script>
 const $ = id => document.getElementById(id);
-let data = [], band = "";
-let lastVisit = 0;
-try { lastVisit = +localStorage.getItem("vf_last_visit") || 0; } catch (e) {}
-const visitStarted = Date.now() / 1000;
-window.addEventListener("beforeunload", () => { try { localStorage.setItem("vf_last_visit", visitStarted); } catch (e) {} });
+let data = [], pending = [], band = "", since = 0, shownAt = 0;
+let opened = new Set();
+try { opened = new Set(JSON.parse(localStorage.getItem("vf_opened") || "[]")); } catch (e) {}
+function saveOpened(){ try { localStorage.setItem("vf_opened", JSON.stringify([...opened].slice(-5000))); } catch (e) {} }
 
-function ago(t){const s=Date.now()/1000-t;if(s<60)return Math.max(1,Math.round(s))+"s ago";if(s<90)return"1m ago";if(s<3600)return Math.round(s/60)+"m ago";if(s<86400)return Math.round(s/3600)+"h ago";return Math.round(s/86400)+"d ago";}
+function ago(t){const s=Date.now()/1000-t;if(s<60)return Math.max(1,Math.round(s))+"s ago";if(s<3600)return Math.round(s/60)+"m ago";if(s<86400)return Math.round(s/3600)+"h ago";return Math.round(s/86400)+"d ago";}
+function clock(t){return new Date(t*1000).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});}
 function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
-function toggle(el){el.addEventListener("click",()=>{el.setAttribute("aria-pressed",el.getAttribute("aria-pressed")!=="true");render();});}
+const on = id => $(id).getAttribute("aria-pressed")==="true";
+function toggle(el, fn){el.addEventListener("click",()=>{el.setAttribute("aria-pressed",!on(el.id));(fn||render)();});}
+function beep(){try{const c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.value=.08;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.15);}catch(e){}}
+
+function card(r){
+  const fl=r.flags.map(f=>`<span class="f ${f==="underpriced"?"deal":f==="modern / reprint"?"bad":""}">${esc(f)}</span>`).join("");
+  const price=r.price!=null?`$${r.price.toFixed(r.price%1?2:0)}${r.was&&r.was>r.price?` <s>$${r.was.toFixed(0)}</s>`:""}`:"?";
+  return `<a class="card${opened.has(r.key)?" opened":""}" data-k="${esc(r.key)}" href="${esc(r.url)}" target="_blank" rel="noopener">${shownAt&&r.first_seen>=shownAt?'<span class="new">NEW</span>':""}
+    ${r.image?`<img class="img" loading="lazy" referrerpolicy="no-referrer" src="${esc(r.image)}" alt="" onerror="this.outerHTML='<div class=noimg>photo on site</div>'">`:'<div class="noimg">no photo</div>'}
+    <div class="body"><div class="top"><span class="price">${price}</span><span class="site">${esc(r.site)}</span></div>
+    <div class="title">${esc(r.title)}</div>
+    <div class="meta">${esc([r.size&&"Size "+r.size,r.brand,"found "+ago(r.first_seen)].filter(Boolean).join(" · "))}</div>
+    <div class="flags">${fl}</div></div></a>`;
+}
 
 function render(){
   const q=$("q").value.toLowerCase().trim(), site=$("site").value, tag=$("tag").value, maxp=parseFloat($("maxp").value);
-  const on=id=>$(id).getAttribute("aria-pressed")==="true";
   let rows=data.filter(r=>(!band||r.band===band)&&(!site||r.site===site)&&(!tag||r.tag===tag)
     &&!(maxp>=0&&(r.price??1e9)>maxp)&&!(on("hideModern")&&r.modern)&&!(on("vintageOnly")&&r.score<3)
-    &&!(on("dealsOnly")&&!r.flags.includes("underpriced"))&&!(on("newOnly")&&r.first_seen<=lastVisit)
+    &&!(on("dealsOnly")&&!r.flags.includes("underpriced"))&&!(on("hideOpened")&&opened.has(r.key))
     &&(!q||(r.title+" "+r.brand+" "+r.descr).toLowerCase().includes(q)));
   const s=$("sort").value;
   const by={new:(a,b)=>b.first_seen-a.first_seen,score:(a,b)=>b.score-a.score||b.first_seen-a.first_seen,
     low:(a,b)=>(a.price??1e9)-(b.price??1e9),high:(a,b)=>(b.price??0)-(a.price??0),
     deal:(a,b)=>(b.flags.includes("underpriced")-a.flags.includes("underpriced"))||b.score-a.score||(a.price??1e9)-(b.price??1e9)}[s];
   rows.sort(by);
-  $("grid").innerHTML=rows.slice(0,600).map(r=>{
-    const fl=r.flags.map(f=>`<span class="f ${f==="underpriced"?"deal":f==="modern / reprint"?"bad":""}">${esc(f)}</span>`).join("");
-    const price=r.price!=null?`$${r.price.toFixed(r.price%1?2:0)}${r.was&&r.was>r.price?` <s>$${r.was.toFixed(0)}</s>`:""}`:"?";
-    return `<a class="card" href="${esc(r.url)}" target="_blank" rel="noopener">${(r.first_seen>lastVisit&&lastVisit)||r.first_seen>visitStarted?'<span class="new">NEW</span>':""}
-      ${r.image?`<img class="img" loading="lazy" referrerpolicy="no-referrer" src="${esc(r.image)}" alt="" onerror="this.outerHTML='<div class=noimg>photo on site</div>'">`:'<div class="noimg">no photo</div>'}
-      <div class="body"><div class="top"><span class="price">${price}</span><span class="site">${esc(r.site)}</span></div>
-      <div class="title">${esc(r.title)}</div>
-      <div class="meta">${esc([r.size&&"Size "+r.size,r.brand,ago(r.first_seen)].filter(Boolean).join(" · "))}</div>
-      <div class="flags">${fl}</div></div></a>`;}).join("");
+  let html="", lastSlot=null;
+  for(const r of rows.slice(0,600)){
+    if(s==="new"){ const slot=Math.floor(r.first_seen/600); if(slot!==lastSlot){ html+=`<div class="batch">Found around ${clock(r.first_seen)}</div>`; lastSlot=slot; } }
+    html+=card(r);
+  }
+  $("grid").innerHTML=html;
   $("empty").hidden=rows.length>0;
   const st=window._status||[];
-  $("status").innerHTML=`<b>${rows.length}</b> of ${data.length} listings · `+(st.length?st.map(x=>`${esc(x.site)} checked ${ago(x.at)}${x.errors?` (${x.errors} blocked)`:""}`).join(" · "):"waiting for the first search pass…");
+  $("status").innerHTML=`<b>${rows.length}</b> ${on("showOld")?"listings":"newly posted shirts"} · `+(st.length?st.map(x=>`${esc(x.site)} checked ${ago(x.at)}${x.errors?` (${x.errors} blocked)`:""}`).join(" · "):"starting up: the first look at each search learns what's already up…");
 }
 
-let since = 0, freshCount = 0;
-function beep(){try{const c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.value=.08;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+.15);}catch(e){}}
 function chips(){
   const n={};data.forEach(r=>n[r.band]=(n[r.band]||0)+1);
   const bands=Object.keys(n).sort((a,b)=>(a==="Other band")-(b==="Other band")||n[b]-n[a]);
-  $("bands").innerHTML=[""].concat(bands).map(b=>`<button class="chip" data-b="${esc(b)}" aria-pressed="${b===band}">${b?esc(b)+" "+n[b]:"All bands "+data.length}</button>`).join("");
+  $("bands").innerHTML=[""].concat(bands).map(b=>`<button class="chip" data-b="${esc(b)}" aria-pressed="${b===band}">${b?esc(b)+" "+n[b]:"All "+data.length}</button>`).join("");
   $("bands").querySelectorAll("button").forEach(x=>x.addEventListener("click",()=>{band=x.dataset.b;chips();render();}));
 }
 function showWatches(w){
@@ -124,28 +133,44 @@ async function watch(body){
   const j=await (await fetch("/api/watch",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})).json();
   showWatches(j.watches);
 }
-$("watchForm").addEventListener("submit",e=>{e.preventDefault();const v=$("watchIn").value.trim();if(v){watch({add:v});$("watchIn").value="";$("q").value="";}});
-async function load(){
+$("watchForm").addEventListener("submit",e=>{e.preventDefault();const v=$("watchIn").value.trim();if(v){watch({add:v});$("watchIn").value="";}});
+
+function updateMore(){
+  $("more").hidden=!pending.length;
+  $("more").textContent=`▲ ${pending.length} new shirt${pending.length===1?"":"s"} posted — show`;
+  document.title=(pending.length?`(${pending.length}) `:"")+"Vintage Finder";
+}
+function showPending(){
+  shownAt=Math.min(...pending.map(r=>r.first_seen));
+  const known=new Set(data.map(r=>r.key));
+  data=pending.filter(r=>!known.has(r.key)).concat(data); pending=[];
+  updateMore(); chips(); $("sort").value="new"; render(); window.scrollTo({top:0,behavior:"smooth"});
+}
+$("more").addEventListener("click",showPending);
+
+async function full(){  // first load, or after switching "include ones already up"
   try{
-    const j=await (await fetch("/api/listings?after="+since)).json();
-    window._status=j.status; showWatches(j.watches);
-    if(since&&j.listings.length){
-      const known=new Set(data.map(r=>r.key));
-      const fresh=j.listings.filter(r=>!known.has(r.key));
-      data=fresh.concat(data); freshCount+=fresh.length;
-      if(fresh.length){
-        $("toast").textContent=`${freshCount} new listing${freshCount>1?"s":""} — click to jump to newest`;$("toast").hidden=false;
-        if($("ping").getAttribute("aria-pressed")==="true")beep();
-      }
-    }else if(!since) data=j.listings;
-    since=j.now-5;  // small overlap so nothing saved mid-request is missed
-    chips(); render();
+    const j=await (await fetch("/api/listings"+(on("showOld")?"?old=1":""))).json();
+    data=j.listings; pending=[]; since=j.now-5; window._status=j.status; showWatches(j.watches);
+    updateMore(); chips(); render();
   }catch(e){$("status").textContent="Can't reach the finder. Is it still running?";}
 }
-$("toast").addEventListener("click",()=>{$("sort").value="new";render();window.scrollTo({top:0,behavior:"smooth"});$("toast").hidden=true;freshCount=0;});
+async function poll(){  // every few seconds: collect what's new, but don't move the page until you ask
+  try{
+    const j=await (await fetch("/api/listings?after="+since)).json();
+    since=j.now-5; window._status=j.status; showWatches(j.watches);
+    const known=new Set(data.map(r=>r.key).concat(pending.map(r=>r.key)));
+    const fresh=j.listings.filter(r=>!known.has(r.key));
+    if(fresh.length){ pending=fresh.concat(pending); updateMore(); if(on("ping"))beep(); }
+    if(!data.length&&pending.length) showPending(); else render();
+  }catch(e){$("status").textContent="Can't reach the finder. Is it still running?";}
+}
+$("grid").addEventListener("click",e=>{const c=e.target.closest(".card");if(c){opened.add(c.dataset.k);saveOpened();c.classList.add("opened");}});
+document.addEventListener("keydown",e=>{if((e.key==="r"||e.key==="R")&&!/input|select/i.test(document.activeElement.tagName)&&pending.length)showPending();});
 ["q","site","tag","maxp","sort"].forEach(id=>$(id).addEventListener("input",render));
-["hideModern","vintageOnly","dealsOnly","newOnly","ping"].forEach(id=>toggle($(id)));
-load(); setInterval(load,3000);
+["hideModern","vintageOnly","dealsOnly","hideOpened","ping"].forEach(id=>toggle($(id)));
+toggle($("showOld"), full);
+full(); setInterval(poll,3000);
 </script>
 </body>
 </html>

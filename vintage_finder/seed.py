@@ -31,4 +31,4 @@ def import_saved(store):
                     it["price"] = float(re.sub(r"[^\d.]", "", detail["price"]) or 0) or it["price"]
                 items.append(it)
     if items:
-        store.save(items)
+        store.save(items, old=True)  # saved earlier, so not newly posted

@@ -59,3 +59,14 @@ def test_other_bands_kept_and_watches_first(tmp_path=None):
     config.WATCHES_PATH = os.path.join(d, "w.json")
     poller.save_watches(["dickless shirt"])
     assert poller.jobs()[0] == ("dickless shirt", "Dickless Shirt", config.WATCH_SECONDS)
+
+
+def test_first_look_is_old_then_new_posts_show():
+    import tempfile, os
+    from vintage_finder.store import Store
+    st = Store(os.path.join(tempfile.mkdtemp(), "t.sqlite"))
+    mk = lambda i, t: {"site": "ebay", "id": str(i), "url": f"u{i}", "title": t, "price": 30}
+    assert st.save([mk(1, "Vintage Metallica tee")], query="metallica", site="ebay") == 0
+    assert st.save([mk(1, "Vintage Metallica tee"), mk(2, "Metallica 1991 tee"), mk(3, "metallica hat")],
+                   query="metallica", site="ebay") == 1
+    assert [r["title"] for r in st.listings()] == ["Metallica 1991 tee"]

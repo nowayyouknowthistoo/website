@@ -21,6 +21,8 @@ BANDS = {  # first match wins: specific bands first, Nirvana and RHCP (broad pat
     "Nine Inch Nails": r"nine inch nails|\bnin\b|downward spiral|trent reznor",
     "The Cranberries": r"cranberries",
     "Siouxsie": r"siouxsie|banshees",
+    "Metallica": r"metallica",
+    "Pink Floyd": r"pink floyd|dark side of the moon|division bell",
     "Wu-Tang": r"wu ?tang|wu ?wear|ol'? dirty|method man|ghostface",
     "Rap tees": r"tupac|2pac|makaveli|biggie|notorious b|dr\.? ?dre|snoop|\brap tee|death row|eazy|\bnwa\b",
     "Nirvana": r"nirvan+a|nervana|kurt|cobain|kobain|nevermind|in utero|incesticide|insecticide|sliver|"
@@ -29,8 +31,11 @@ BANDS = {  # first match wins: specific bands first, Nirvana and RHCP (broad pat
                              r"lollapalooza",
 }
 NOT_THE_BAND = r"manic nirvana|robert plant|hot stuff|kurt adler|kurt s\.? adler|philly peppers"
-NOT_A_SHIRT = (r"\b(cd|vinyl|lp|cassette|poster|keychain|patch|magazine|sticker|pin|mug|signed|"
-               r"framed|cardigan|sweater|knit|corset|skirt|ornament|lighter|flag|tapestry|book)\b")
+NOT_A_SHIRT = (r"\b(cd|vinyl|lp|cassette|vhs|dvd|poster|keychain|patch|magazine|sticker|pin|mug|signed|framed|cardigan|"
+               r"sweater|knit|corset|skirt|dress|ornament|lighter|flag|tapestry|book|pants|jeans|shorts|leggings|"
+               r"shoes|sneakers|boots|hat|cap(?! ?sleeve)|snapback|beanie|bucket hat|jacket|coat|windbreaker|bag|backpack|"
+               r"tote|wallet|socks|bra|swimsuit|bikini|necklace|bracelet|earrings|ring|figure|funko|plush|toy|"
+               r"blanket|towel|mask|phone case|bandana|scarf|belt|lanyard|ticket|program|tour book|guitar pick)s?\b")
 
 # Clearly modern: say so, or come from current mall / licensed lines.
 MODERN = (r"\breprint|re-print|reproduction|repro\b|modern|vintage[- ]style|vintage inspired|"
