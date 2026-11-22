@@ -1,7 +1,7 @@
 # Vintage Finder
 
 A gem.com-style search page for vintage band shirts that runs on your own computer. It searches
-Depop, eBay, Poshmark and Vinted every 5 minutes for 90s Nirvana and Red Hot Chili Peppers
+Depop, eBay, Poshmark and Vinted every 15 minutes for 90s band and rap shirts (Nirvana, RHCP, Sade, Sub Pop bands, Pumpkins, Soundgarden, Oasis, Green Day, Radiohead, NIN, Wu-Tang, Tupac and more)
 shirts, newest first, and shows them on one page with vintage filters:
 
 - **Hide reprints & modern:** drops listings whose title or description says reprint, brand new,

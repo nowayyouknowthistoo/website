@@ -6,13 +6,29 @@ the page, so you can see why something ranked high.
 
 import re
 
-BANDS = {
+BANDS = {  # first match wins: specific bands first, Nirvana and RHCP (broad patterns) last
+    "Sade": r"\bsade\b",
+    "Sub Pop": r"sub ?pop|mudhoney|\bl7\b|screaming trees|\btad\b|babes in toyland|\bhazel\b|dickless|"
+               r"sister double happiness|afghan whigs|sebadoh|supersuckers",
+    "Smashing Pumpkins": r"smashing pumpkins|corgan|mellon collie|siamese dream",
+    "Soundgarden": r"soundgarden|chris cornell|superunknown|badmotorfinger",
+    "Oasis": r"\boasis\b|gallagher|wonderwall|morning glory",
+    "Green Day": r"green ?day|dookie|insomniac",
+    "Radiohead": r"radiohead|ok computer|pablo honey|thom yorke",
+    "Dinosaur Jr": r"dinosaur jr|j mascis",
+    "Butthole Surfers": r"butthole surfers",
+    "Stone Temple Pilots": r"stone temple pilots|\bstp\b|weiland",
+    "Nine Inch Nails": r"nine inch nails|\bnin\b|downward spiral|trent reznor",
+    "The Cranberries": r"cranberries",
+    "Siouxsie": r"siouxsie|banshees",
+    "Wu-Tang": r"wu ?tang|wu ?wear|ol'? dirty|method man|ghostface",
+    "Rap tees": r"tupac|2pac|makaveli|biggie|notorious b|dr\.? ?dre|snoop|\brap tee|death row|eazy|\bnwa\b",
     "Nirvana": r"nirvan+a|nervana|kurt|cobain|kobain|nevermind|in utero|incesticide|insecticide|sliver|"
                r"bleach|vestibule|unplugged",
     "Red Hot Chili Peppers": r"chil+i\s*pepper|rhcp|red hot|blood sugar|magik|one hot minute|mother'?s milk|"
                              r"lollapalooza",
 }
-NOT_THE_BAND = r"manic nirvana|robert plant|hot stuff|kurt adler|kurt s\.? adler|philly peppers|radiohead"
+NOT_THE_BAND = r"manic nirvana|robert plant|hot stuff|kurt adler|kurt s\.? adler|philly peppers"
 NOT_A_SHIRT = (r"\b(cd|vinyl|lp|cassette|poster|keychain|patch|magazine|sticker|pin|mug|signed|"
                r"framed|cardigan|sweater|knit|corset|skirt|ornament|lighter|flag|tapestry|book)\b")
 
@@ -37,7 +53,7 @@ TELLS = [
     ("faded / thrashed", r"faded|thrashed|distressed|sun fade", 1),
     ("says vintage", r"vintage|\bvtg\b|true vintage", 1),
 ]
-MISSPELL = r"nirvanna|nervana|kobain|curt cobain|cobian|insecticide|chilli|chilly pepper|red hot chilly"
+MISSPELL = r"nirvanna|nervana|kobain|curt cobain|cobian|insecticide|chilli|chilly pepper|red hot chilly|smashing pumkins|sound garden|radio head|2 pac"
 
 
 def band_of(text: str) -> str | None:
