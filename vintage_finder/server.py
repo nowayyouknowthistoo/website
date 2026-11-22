@@ -31,7 +31,7 @@ def serve(store, port):
                 qs = parse_qs(u.query)
                 after = float((qs.get("after") or ["0"])[0] or 0)
                 old = (qs.get("old") or ["0"])[0] == "1"
-                self.reply(json.dumps({"listings": store.listings(after=after, include_old=old), "status": store.status(),
+                self.reply(json.dumps({"listings": store.listings(after=after, include_old=old), "status": store.status(), "counts": store.counts(),
                                        "watches": load_watches(), "now": time.time()}).encode())
             elif u.path in ("/", "/index.html"):
                 self.reply(PAGE.encode(), "text/html; charset=utf-8")

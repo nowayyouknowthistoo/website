@@ -45,6 +45,8 @@ def run_one(store, site, s, q, band, log=print):
         store.log_run(site, q, len(items), new)
         if new:
             log(f"  {site:8} +{new:3} new  '{q}'")
+        elif not items:
+            log(f"  {site:8} got 0 listings for '{q}' (blocked or nothing listed)")
         return new
     except Exception as e:  # one bad site or search shouldn't stop the rest
         store.log_run(site, q, 0, 0, f"{type(e).__name__}: {e}"[:300])
@@ -72,8 +74,12 @@ def site_loop(store, site, log=print):
 def forever(store, log=print):
     for site in config.SITES:
         threading.Thread(target=site_loop, args=(store, site, log), daemon=True).start()
-    while True:
-        time.sleep(3600)
+    while True:  # a one-line health check per site every minute
+        time.sleep(60)
+        for st in store.status():
+            note = "  <- nothing coming back, probably blocked" if st["runs"] >= 3 and not st["found"] else ""
+            log(f"[last 10 min] {st['site']:8} {st['runs']} searches, {st['found'] or 0} listings seen, "
+                f"{st['new'] or 0} new, {st['errors'] or 0} errors{note}")
 
 
 def run_once(store, sites=None, log=print):

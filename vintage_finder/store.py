@@ -73,8 +73,13 @@ class Store:
                                (time.time() - since_days * 86400, after, int(include_old), limit)).fetchall()
         return [{**dict(r), "flags": json.loads(r["flags"])} for r in rows]
 
+    def counts(self):
+        r = self.db.execute("select count(*) n, sum(baseline = 1) old from listings").fetchone()
+        return {"total": r["n"] or 0, "already_up": r["old"] or 0, "new": (r["n"] or 0) - (r["old"] or 0)}
+
     def status(self):
         rows = self.db.execute(
-            "select site, max(at) at, sum(new) new, sum(error != '') errors, count(*) runs "
+            "select site, max(at) at, sum(new) new, sum(found) found, sum(error != '') errors, count(*) runs, "
+            "(select error from runs r2 where r2.site = runs.site and r2.error != '' order by at desc limit 1) last_error "
             "from runs where at > ? group by site", (time.time() - 600,)).fetchall()
         return [dict(r) for r in rows]

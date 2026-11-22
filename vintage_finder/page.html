@@ -116,7 +116,13 @@ function render(){
   $("grid").innerHTML=html;
   $("empty").hidden=rows.length>0;
   const st=window._status||[];
-  $("status").innerHTML=`<b>${rows.length}</b> ${on("showOld")?"listings":"newly posted shirts"} · `+(st.length?st.map(x=>`${esc(x.site)} checked ${ago(x.at)}${x.errors?` (${x.errors} blocked)`:""}`).join(" · "):"starting up: the first look at each search learns what's already up…");
+  const c=window._counts||{};
+  const sites=st.map(x=>{
+    const dead=x.runs>=3&&!x.found;
+    return `<span title="${esc(x.last_error||"")}">${esc(x.site)}: ${dead?'<b style="color:var(--accent)">nothing coming back (blocked?)</b>':`${x.found||0} seen, ${x.new||0} new`}${x.errors&&!dead?` · ${x.errors} errors`:""}</span>`;
+  }).join(" · ");
+  $("status").innerHTML=`<b>${rows.length}</b> ${on("showOld")?"listings":"newly posted shirts"} · ${c.already_up||0} already-up listings learned`+
+    (st.length?` · last 10 min — ${sites}`:" · starting up: the first look at each search learns what's already up, new posts start showing after that");
 }
 
 function chips(){
@@ -151,14 +157,14 @@ $("more").addEventListener("click",showPending);
 async function full(){  // first load, or after switching "include ones already up"
   try{
     const j=await (await fetch("/api/listings"+(on("showOld")?"?old=1":""))).json();
-    data=j.listings; pending=[]; since=j.now-5; window._status=j.status; showWatches(j.watches);
+    data=j.listings; pending=[]; since=j.now-5; window._status=j.status; window._counts=j.counts; showWatches(j.watches);
     updateMore(); chips(); render();
   }catch(e){$("status").textContent="Can't reach the finder. Is it still running?";}
 }
 async function poll(){  // every few seconds: collect what's new, but don't move the page until you ask
   try{
     const j=await (await fetch("/api/listings?after="+since)).json();
-    since=j.now-5; window._status=j.status; showWatches(j.watches);
+    since=j.now-5; window._status=j.status; window._counts=j.counts; showWatches(j.watches);
     const known=new Set(data.map(r=>r.key).concat(pending.map(r=>r.key)));
     const fresh=j.listings.filter(r=>!known.has(r.key));
     if(fresh.length){ pending=fresh.concat(pending); updateMore(); if(on("ping"))beep(); }
