@@ -35,9 +35,20 @@ SEARCHES = {
     ],
 }
 
+# Broad searches that catch any band, re-run about once a minute on every site so new listings show up fast.
+# Shirts from bands not listed above are kept too (shown as "Other band").
+FRESH = [
+    "vintage band tee", "vintage band shirt", "single stitch band tee", "90s band t shirt",
+    "vintage concert shirt", "vintage tour shirt", "vintage rap tee",
+]
+
 SITES = ["depop", "ebay", "poshmark", "vinted"]
 
-POLL_MINUTES = 15         # how often each search is re-run (about 70 searches across 4 sites)
-REQUEST_GAP_SECONDS = 2   # pause between requests so sites don't block you
+# Each site runs in its own loop, one request every REQUEST_GAP_SECONDS. Searches are re-run on these timers:
+WATCH_SECONDS = 45        # searches you add in the page's Watch box (top priority)
+FRESH_SECONDS = 60        # the broad FRESH searches
+BAND_SECONDS = 600        # the per-band SEARCHES above
+REQUEST_GAP_SECONDS = 3   # pause between requests to the same site so it doesn't block you
+WATCHES_PATH = "data/watches.json"
 PORT = 8765
 DB_PATH = "data/vintage_finder.sqlite"

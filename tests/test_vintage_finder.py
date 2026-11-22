@@ -46,3 +46,16 @@ def test_analyse_flags():
     assert analyse("Vintage 1989 hot stuff chili pepper tee")["band"] is None
     assert analyse("Lollapalooza 1992", desc="sealed in a box until 2022")["modern"] is False
     assert "misspelled title" in analyse("vintage nirvanna shirt")["flags"]
+
+
+def test_other_bands_kept_and_watches_first(tmp_path=None):
+    import tempfile, os
+    from vintage_finder import config, poller
+    from vintage_finder.store import Store
+    d = tempfile.mkdtemp()
+    store = Store(os.path.join(d, "t.sqlite"))
+    assert store.save([{"site": "ebay", "id": "1", "url": "u", "title": "Vintage 1994 Fugazi tour tee", "price": 40}]) == 1
+    assert store.listings()[0]["band"] == "Other band"
+    config.WATCHES_PATH = os.path.join(d, "w.json")
+    poller.save_watches(["dickless shirt"])
+    assert poller.jobs()[0] == ("dickless shirt", "Dickless Shirt", config.WATCH_SECONDS)

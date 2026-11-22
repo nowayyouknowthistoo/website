@@ -33,8 +33,8 @@ class Store:
         with self.lock, self.db:
             for it in items:
                 v = analyse(it["title"], it.get("brand", ""), it.get("desc", ""), it.get("price"))
-                band = v["band"] or band_hint
-                if not band or not v["shirt"]:
+                band = v["band"] or band_hint or "Other band"
+                if not v["shirt"]:
                     continue
                 key = f'{it["site"]}:{it["id"]}'
                 cur = self.db.execute("update listings set price=?, was=?, last_seen=? where key=?",
@@ -53,13 +53,15 @@ class Store:
         with self.lock, self.db:
             self.db.execute("insert into runs values (?,?,?,?,?,?)", (site, query, time.time(), found, new, error))
 
-    def listings(self, since_days=30, limit=3000):
-        rows = self.db.execute("select * from listings where last_seen > ? order by first_seen desc limit ?",
-                               (time.time() - since_days * 86400, limit)).fetchall()
+    def listings(self, since_days=30, limit=3000, after=0.0):
+        """Listings seen in the last since_days; with after, only those first seen after that time."""
+        rows = self.db.execute("select * from listings where last_seen > ? and first_seen > ? "
+                               "order by first_seen desc limit ?",
+                               (time.time() - since_days * 86400, after, limit)).fetchall()
         return [{**dict(r), "flags": json.loads(r["flags"])} for r in rows]
 
     def status(self):
         rows = self.db.execute(
             "select site, max(at) at, sum(new) new, sum(error != '') errors, count(*) runs "
-            "from runs where at > ? group by site", (time.time() - 3600,)).fetchall()
+            "from runs where at > ? group by site", (time.time() - 600,)).fetchall()
         return [dict(r) for r in rows]

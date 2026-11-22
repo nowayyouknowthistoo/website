@@ -1,5 +1,5 @@
-"""Vintage Finder: searches Depop, eBay, Poshmark and Vinted every few minutes and shows
-new 90s Nirvana / RHCP shirts on a local web page.
+"""Vintage Finder: searches Depop, eBay, Poshmark and Vinted non-stop and shows new vintage band
+shirts on a local web page within seconds of finding them.
 
   python -m vintage_finder              # search forever + open http://localhost:8765
   python -m vintage_finder --once       # one search pass, then exit
